@@ -75,3 +75,5 @@ Assets/
 ## Notes
 
 `game.txt` contains the original planning discussion. Keep external asset licenses and URLs in `docs/asset_sources.md`.
+
+Team responsibilities are defined in `docs/team_tasks.md`.

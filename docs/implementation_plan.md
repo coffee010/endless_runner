@@ -99,6 +99,8 @@ Deliverable: graphics effects can be shown clearly during defense.
 - B Systems: track spawning, object pooling, obstacle/collectible prefab setup.
 - C Graphics: shaders/materials, particles, URP post-processing, screenshots/report visuals.
 
+The concrete folder-level split is in `docs/team_tasks.md`.
+
 ## Risk Controls
 
 - Build gameplay with primitive objects first.
