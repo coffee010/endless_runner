@@ -1,139 +1,139 @@
-# Team Task Split
+# 三人任务分工
 
-This document is the working split for the 3-person Neon Rush project. The goal is to reduce merge conflicts and make every teammate responsible for clear Unity folders.
+这份文档是《Neon Rush：霓虹轨道》的正式分工。目标是减少合并冲突，让每个人负责清楚的 Unity 目录。
 
-## Roles
+## 角色总览
 
-| Role | Owner | Main Responsibility | Primary Folders |
+| 角色 | 负责人 | 主要职责 | 主要目录 |
 | --- | --- | --- | --- |
-| Lead Integrator / Gameplay | 你 | Project integration, scene wiring, core gameplay scripts, UI logic, GitHub coordination | `Assets/Scripts/Core`, `Assets/Scripts/Player`, `Assets/Scripts/UI`, `Assets/Scenes` |
-| Track / Prefab Builder | 同学 1 | Track segment prefabs, obstacle prefabs, collectible prefabs, placement rules | `Assets/Prefabs/TrackSegments`, `Assets/Prefabs/Obstacles`, `Assets/Prefabs/Collectibles`, `Assets/Scripts/Track`, `Assets/Scripts/Gameplay` |
-| Graphics / Assets / Presentation | 同学 2 | External assets, materials, shaders, particles, post-processing, screenshots, report assets | `Assets/Art`, `Assets/Materials`, `Assets/Shaders`, `Assets/VFX`, `Assets/Prefabs/VFX`, `docs` |
+| 总集成 / 核心玩法 | 你 | 项目集成、主场景搭建、核心玩法脚本、UI 逻辑、Git 协调 | `Assets/Scripts/Core`, `Assets/Scripts/Player`, `Assets/Scripts/UI`, `Assets/Scenes` |
+| 路段 / Prefab 搭建 | 同学 1 | 路段 prefab、障碍 prefab、收集物 prefab、摆放规则 | `Assets/Prefabs/TrackSegments`, `Assets/Prefabs/Obstacles`, `Assets/Prefabs/Collectibles`, `Assets/Scripts/Track`, `Assets/Scripts/Gameplay` |
+| 图形 / 资源 / 展示 | 同学 2 | 外部资源、材质、Shader、粒子、后处理、截图、报告素材 | `Assets/Art`, `Assets/Materials`, `Assets/Shaders`, `Assets/VFX`, `Assets/Prefabs/VFX`, `docs` |
 
-## Lead Integrator / Gameplay
+## 你：总集成 / 核心玩法
 
-Owner: 你
+负责人：你
 
-### Must Finish
+### 必须完成
 
-- Create and maintain the main scene:
+- 创建并维护主场景：
   - `Assets/Scenes/Main.unity`
-- Create scene root objects:
+- 创建场景根对象：
   - `GameManager`
   - `TrackSpawner`
   - `Player`
   - `Main Camera`
   - `Global Volume`
   - `Canvas`
-- Implement or integrate core scripts:
+- 集成核心脚本：
   - `Assets/Scripts/Core/GameManager.cs`
   - `Assets/Scripts/Core/ScoreManager.cs`
   - `Assets/Scripts/Player/RunnerController.cs`
   - `Assets/Scripts/Player/PlayerCollision.cs`
   - `Assets/Scripts/UI/UIManager.cs`
-- Wire scripts to objects in the scene.
-- Own the game loop:
-  - start game
-  - running
-  - game over
-  - restart
-- Own input:
-  - A/D or arrow keys for lane switch
-  - Space/W for jump
-  - S for slide
-  - R for restart
-- Own Git:
-  - check merge conflicts
-  - verify the project opens
-  - make milestone commits
-  - push to GitHub
+- 把脚本挂到场景对象上。
+- 负责游戏流程：
+  - 开始
+  - 运行
+  - 失败
+  - 重开
+- 负责输入：
+  - A/D 或方向键左右换道
+  - Space/W 跳跃
+  - S 下滑
+  - R 重开
+- 负责 Git 集成：
+  - 检查合并冲突
+  - 确认项目能打开
+  - 做阶段性 commit
+  - 最终手动 push 到 GitHub
 
-### Should Not Own
+### 不应该主要负责
 
-- Do not hand-place all track obstacles yourself unless teammate 1 is blocked.
-- Do not spend too long polishing particles/materials unless teammate 2 is blocked.
+- 不要自己把所有障碍都摆完，除非同学 1 卡住。
+- 不要长时间调粒子和材质，除非同学 2 卡住。
 
-### Definition Of Done
+### 验收标准
 
-- A placeholder player can run for at least 60 seconds.
-- Collision with an obstacle causes game over.
-- Restart works.
-- Score and energy UI update.
-- Teammate prefabs can be dragged into the scene without script errors.
+- 占位玩家可以连续跑至少 60 秒。
+- 撞到障碍会 Game Over。
+- 重开功能正常。
+- 分数和能量 UI 会更新。
+- 同学做的 prefab 可以拖进场景或 `TrackSpawner`，没有脚本报错。
 
-## Track / Prefab Builder
+## 同学 1：路段 / Prefab 搭建
 
-Owner: 同学 1
+负责人：同学 1
 
-### Must Finish
+### 必须完成
 
-- Create these folders after Unity project exists:
+- Unity 项目创建后，建立这些文件夹：
   - `Assets/Prefabs/TrackSegments`
   - `Assets/Prefabs/Obstacles`
   - `Assets/Prefabs/Collectibles`
-- Create 6 fixed-length track segment prefabs:
+- 创建 6 个固定长度路段 prefab：
   - `TrackSegment_Straight_01.prefab`
   - `TrackSegment_Collectibles_01.prefab`
   - `TrackSegment_LowObstacle_01.prefab`
   - `TrackSegment_HighObstacle_01.prefab`
   - `TrackSegment_LaneBlock_01.prefab`
   - `TrackSegment_ColorGate_01.prefab`
-- Keep every segment length the same:
-  - recommended length: `30`
-  - segment start at local `Z = 0`
-  - segment end at local `Z = 30`
-- Create obstacle prefabs:
+- 每个路段长度保持一致：
+  - 推荐长度：`30`
+  - 路段起点在本地坐标 `Z = 0`
+  - 路段终点在本地坐标 `Z = 30`
+- 创建障碍 prefab：
   - `Obstacle_Low.prefab`
   - `Obstacle_High.prefab`
   - `Obstacle_LaneBlock.prefab`
   - `Gate_Color_Red.prefab`
   - `Gate_Color_Blue.prefab`
   - `Gate_Color_Green.prefab`
-- Create collectible prefabs:
+- 创建收集物 prefab：
   - `Collectible_Energy.prefab`
   - `Collectible_Score.prefab`
-- Work with these scripts:
+- 配合这些脚本工作：
   - `Assets/Scripts/Track/TrackSegment.cs`
   - `Assets/Scripts/Track/TrackSpawner.cs`
   - `Assets/Scripts/Gameplay/Obstacle.cs`
   - `Assets/Scripts/Gameplay/Collectible.cs`
   - `Assets/Scripts/Gameplay/ColorGate.cs`
 
-### Placement Rules
+### 摆放规则
 
-- Use three lane X positions only:
-  - left: `-2.5`
-  - center: `0`
-  - right: `2.5`
-- Avoid impossible patterns:
-  - never block all 3 lanes at the same Z position
-  - do not place high obstacle and low obstacle too close together
-  - keep at least `5` units between major obstacles
-- Use simple primitive shapes first:
-  - cube for obstacles
-  - capsule or plane for gates
-  - sphere for energy collectibles
-- Prefabs should work before final art is imported.
+- 只使用三条轨道的 X 坐标：
+  - 左：`-2.5`
+  - 中：`0`
+  - 右：`2.5`
+- 避免无解组合：
+  - 同一个 Z 位置不要挡住三条轨道。
+  - 高障碍和低障碍不要贴得太近。
+  - 主要障碍之间至少间隔 `5` 个单位。
+- 第一版先用简单几何体：
+  - Cube 做障碍
+  - Capsule 或 Plane 做能量门
+  - Sphere 做能量收集物
+- prefab 先能用，再替换最终美术。
 
-### Should Not Own
+### 不应该主要负责
 
-- Do not edit `RunnerController.cs` or `GameManager.cs` unless agreed.
-- Do not change global post-processing or shader files unless agreed with teammate 2.
+- 不要改 `RunnerController.cs` 或 `GameManager.cs`，除非和你商量过。
+- 不要改全局后处理和 Shader 文件，除非和同学 2 商量过。
 
-### Definition Of Done
+### 验收标准
 
-- At least 6 track segment prefabs exist.
-- Each segment connects cleanly with no visible offset.
-- Obstacles and collectibles have colliders/triggers configured.
-- The lead integrator can add the segment prefabs to `TrackSpawner` and run the game.
+- 至少有 6 个路段 prefab。
+- 每个路段能无缝连接，没有明显错位。
+- 障碍和收集物的 Collider / Trigger 配置正确。
+- 你可以把这些路段 prefab 加到 `TrackSpawner` 后直接运行。
 
-## Graphics / Assets / Presentation
+## 同学 2：图形 / 资源 / 展示
 
-Owner: 同学 2
+负责人：同学 2
 
-### Must Finish
+### 必须完成
 
-- Create and maintain asset folders:
+- 创建并维护资源目录：
   - `Assets/Art/Characters`
   - `Assets/Art/Environment`
   - `Assets/Art/Obstacles`
@@ -142,93 +142,93 @@ Owner: 同学 2
   - `Assets/Shaders`
   - `Assets/VFX`
   - `Assets/Prefabs/VFX`
-- Record external assets in:
+- 记录外部资源来源：
   - `docs/asset_sources.md`
-- Create minimum materials:
+- 创建最小可用材质：
   - `M_Track_Neon.mat`
   - `M_Obstacle_Neon.mat`
   - `M_Gate_Red.mat`
   - `M_Gate_Blue.mat`
   - `M_Gate_Green.mat`
   - `M_Collectible_Energy.mat`
-- Create minimum shaders or Shader Graphs:
+- 创建最小可用 Shader 或 Shader Graph：
   - `Assets/Shaders/NeonTrack`
   - `Assets/Shaders/EnergyGate`
-  - optional: `Assets/Shaders/Dissolve`
-- Create minimum VFX prefabs:
+  - 可选：`Assets/Shaders/Dissolve`
+- 创建最小可用 VFX prefab：
   - `VFX_Collect.prefab`
   - `VFX_Burst.prefab`
   - `VFX_Hit.prefab`
   - `VFX_GatePass.prefab`
-- Configure the main visual stack:
+- 配置主要画面效果：
   - Bloom
   - Color Adjustments
   - Vignette
-  - neon emission colors
+  - 霓虹 Emission 颜色
 
-### Report / Defense Materials
+### 报告 / 答辩材料
 
-- Capture screenshots for:
-  - gameplay overview
-  - neon track material
-  - energy gate material
-  - particles
-  - Bloom on/off comparison
-- Maintain a short notes file:
+- 截图内容：
+  - 游戏整体画面
+  - 霓虹轨道材质
+  - 能量门材质
+  - 粒子效果
+  - Bloom 开关对比
+- 维护一份简短图形说明：
   - `docs/graphics_notes.md`
-- Prepare report sections:
-  - external asset source explanation
-  - shader effect explanation
-  - post-processing explanation
-  - before/after screenshots
+- 准备报告部分：
+  - 外部资源来源说明
+  - Shader 效果说明
+  - 后处理说明
+  - 前后对比截图
 
-### Should Not Own
+### 不应该主要负责
 
-- Do not change track prefab placement rules without teammate 1.
-- Do not change gameplay state scripts without the lead integrator.
+- 不要擅自改变同学 1 的路段 prefab 摆放规则。
+- 不要擅自改核心玩法状态脚本。
 
-### Definition Of Done
+### 验收标准
 
-- The scene has a clear neon sci-fi look.
-- Bloom and emission are visible in screenshots.
-- At least one shader effect is easy to explain in the report.
-- Asset sources are recorded with URL and license.
+- 场景有明确的霓虹科幻风格。
+- 截图里能明显看到 Bloom 和发光材质。
+- 至少有一个 Shader 效果可以在报告里讲清楚。
+- 外部资源都有 URL 和 License 记录。
 
-## Codex Support
+## Codex 辅助范围
 
-I will mainly help with:
+我主要帮你们做：
 
-- Writing C# scripts.
-- Writing or designing Shader Graph/HLSL effects.
-- Debugging Unity errors.
-- Designing prefab interfaces.
-- Explaining what to attach in Inspector.
-- Writing report technical descriptions.
-- Reviewing Git changes before merging.
+- 写 C# 脚本。
+- 写或设计 Shader Graph / HLSL 效果。
+- Debug Unity 报错。
+- 设计 prefab 接口。
+- 说明 Inspector 里该挂什么。
+- 写报告技术说明。
+- 合并前帮你们看改动风险。
 
-The team still needs to do:
+你们仍然需要自己做：
 
-- Unity Editor dragging and Inspector assignment.
-- Prefab construction.
-- Importing art/audio assets.
-- Visual tuning.
-- Local playtesting.
-- Screenshots, video and defense rehearsal.
+- Unity Editor 里的拖拽和 Inspector 赋值。
+- prefab 搭建。
+- 导入美术和音频资源。
+- 视觉调参。
+- 本机 Play Mode 测试。
+- 截图、录屏和答辩演练。
 
-## Folder Ownership Rules
+## 目录归属规则
 
-- Lead integrator owns:
+- 你负责：
   - `Assets/Scenes`
   - `Assets/Scripts/Core`
   - `Assets/Scripts/Player`
   - `Assets/Scripts/UI`
-- Teammate 1 owns:
+- 同学 1 负责：
   - `Assets/Prefabs/TrackSegments`
   - `Assets/Prefabs/Obstacles`
   - `Assets/Prefabs/Collectibles`
   - `Assets/Scripts/Track`
   - `Assets/Scripts/Gameplay`
-- Teammate 2 owns:
+- 同学 2 负责：
   - `Assets/Art`
   - `Assets/Materials`
   - `Assets/Shaders`
@@ -237,67 +237,67 @@ The team still needs to do:
   - `docs/asset_sources.md`
   - `docs/graphics_notes.md`
 
-If a change touches another teammate's folder, mention it before committing.
+如果一次改动碰到别人的目录，commit 前先说一声。
 
-## Branch Naming
+## 建议分支名
 
-- Lead integrator:
+- 你：
   - `feature/gameplay-core`
   - `feature/ui-game-loop`
-- Teammate 1:
+- 同学 1：
   - `feature/track-prefabs`
   - `feature/obstacles-collectibles`
-- Teammate 2:
+- 同学 2：
   - `feature/neon-graphics`
   - `feature/vfx-presentation`
 
-## First 3 Days
+## 前 3 天安排
 
-### Day 1
+### 第 1 天
 
-- Lead integrator:
-  - create Unity URP project
-  - create `Main.unity`
-  - add placeholder player, camera, GameManager
-- Teammate 1:
-  - create 2 track segment prefabs with primitive geometry
-  - create low obstacle and energy collectible prefabs
-- Teammate 2:
-  - create placeholder neon materials
-  - enable Bloom and Color Adjustments
-  - fill first rows in `docs/asset_sources.md`
+- 你：
+  - 创建 Unity URP 项目
+  - 创建 `Main.unity`
+  - 添加占位玩家、相机、GameManager
+- 同学 1：
+  - 用基础几何体创建 2 个路段 prefab
+  - 创建低障碍和能量收集物 prefab
+- 同学 2：
+  - 创建占位霓虹材质
+  - 开启 Bloom 和 Color Adjustments
+  - 填写 `docs/asset_sources.md` 的第一批资源来源
 
-### Day 2
+### 第 2 天
 
-- Lead integrator:
-  - integrate runner movement and restart loop
-  - add score UI
-- Teammate 1:
-  - expand to 6 track segment prefabs
-  - add high obstacle and lane block obstacle
-- Teammate 2:
-  - make track/gate materials visible and consistent
-  - create collect and hit particles
+- 你：
+  - 集成玩家移动和重开流程
+  - 添加分数 UI
+- 同学 1：
+  - 扩展到 6 个路段 prefab
+  - 添加高障碍和轨道阻挡障碍
+- 同学 2：
+  - 统一跑道和能量门材质
+  - 创建收集粒子和撞击粒子
 
-### Day 3
+### 第 3 天
 
-- Lead integrator:
-  - integrate track spawning and collision
-  - verify one-minute playable loop
-- Teammate 1:
-  - fix impossible obstacle layouts
-  - test segment connection
-- Teammate 2:
-  - take first screenshots
-  - document shader/post-processing plan
+- 你：
+  - 集成路段生成和碰撞
+  - 验证可以连续跑 1 分钟
+- 同学 1：
+  - 修掉无解障碍组合
+  - 测试路段接缝
+- 同学 2：
+  - 截第一批效果图
+  - 写 Shader / 后处理方案说明
 
-## MVP Lock
+## MVP 锁定规则
 
-Do not expand scope until these are done:
+下面这些完成前，不要扩展范围：
 
-- Player can run, switch lanes, jump and slide.
-- Track segments spawn continuously.
-- Obstacles can cause failure.
-- Collectibles update score or energy.
-- Game over and restart work.
-- Neon material, Bloom and at least one particle effect are visible.
+- 玩家可以跑、换道、跳跃、下滑。
+- 路段可以连续生成。
+- 障碍可以导致失败。
+- 收集物可以更新分数或能量。
+- Game Over 和 Restart 正常。
+- 霓虹材质、Bloom、至少一个粒子效果可见。

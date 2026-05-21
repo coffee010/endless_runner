@@ -1,100 +1,100 @@
-# Beginner Action Plan
+# 新手行动计划
 
-This is the practical plan for teammates who have not used Unity before. Follow it in order. Do not start polishing art before the capsule prototype works.
+这份文档给没有 Unity 经验的同学看。先按顺序做，不要在胶囊体原型跑通之前去抠美术、模型和复杂 Shader。
 
-## Current Progress
+## 当前进度
 
-Already done in the repository:
+仓库里已经完成：
 
-- Git repository initialized.
-- GitHub remote configured.
-- Planning docs added.
-- Team task split added.
-- First C# scripts added under `Assets/Scripts`.
+- Git 仓库已初始化。
+- GitHub 远程仓库已配置。
+- 项目规划文档已添加。
+- 三人分工文档已添加。
+- 第一批 C# 脚本已经放在 `Assets/Scripts` 下。
 
-Not done yet:
+还没有完成：
 
-- Unity URP project has not been generated.
-- `Packages/` and `ProjectSettings/` do not exist yet.
-- Main scene, prefabs, materials and UI have not been created in Unity.
+- Unity URP 工程还没有真正生成。
+- 还没有 `Packages/` 和 `ProjectSettings/`。
+- 主场景、prefab、材质、UI 还没有在 Unity 里创建。
 
-## The First Target
+## 第一目标
 
-Within 48 hours, finish this prototype:
+48 小时内先做出这个原型：
 
-- A capsule player moves forward.
-- A/D switches lanes.
-- Space jumps.
-- S slides.
-- A simple track spawns repeatedly.
-- Hitting an obstacle causes game over.
-- R restarts.
-- Score increases.
+- 胶囊体玩家自动向前跑。
+- A/D 可以左右换道。
+- Space 可以跳跃。
+- S 可以下滑。
+- 简单路段可以不断生成。
+- 撞到障碍会失败。
+- 按 R 可以重开。
+- 分数会增加。
 
-If this works, the project is viable.
+这个版本跑通，项目就可行。
 
-## What You Should Do First
+## 你先做什么
 
-Owner: 你
+负责人：你
 
-### Step 1: Install Unity
+### 第 1 步：安装 Unity
 
-Install with Unity Hub:
+用 Unity Hub 安装：
 
-- Unity Editor: `2022.3 LTS`
-- Template to use later: `3D (URP)`
-- Module: `Windows Build Support`
-- IDE: Visual Studio Community if you do not already have a C# IDE
+- Unity Editor：`2022.3 LTS`
+- 后面创建项目用的模板：`3D (URP)`
+- 必装模块：`Windows Build Support`
+- IDE：如果你电脑上没有 Visual Studio 或 Rider，就装 `Visual Studio Community`
 
-You do not need Android, WebGL, iOS or Linux modules now.
+现在不需要装 Android、WebGL、iOS、Linux 模块。
 
-### Step 2: Create The Unity Project
+### 第 2 步：创建 Unity 项目
 
-Try creating the project directly in:
+优先尝试直接创建到这个目录：
 
 ```text
 D:\programing\code\cghw\endless_runner
 ```
 
-Use:
+项目设置：
 
-- Template: `3D (URP)`
-- Project name: `endless_runner` or `NeonRush`
+- Template：`3D (URP)`
+- Project name：`endless_runner` 或 `NeonRush`
 
-If Unity Hub refuses because the folder is not empty:
+如果 Unity Hub 提示这个文件夹不是空的，不允许创建：
 
-1. Create the Unity project in a temporary folder.
-2. Close Unity.
-3. Move generated folders/files into this repository:
+1. 先在临时文件夹创建 Unity 项目。
+2. 关闭 Unity。
+3. 把 Unity 生成的这些内容移动到当前仓库：
    - `Assets`
    - `Packages`
    - `ProjectSettings`
-   - any `.sln` or `.csproj` files can be ignored by Git.
-4. Keep existing files:
+   - `.sln` 和 `.csproj` 文件可以留着，Git 会忽略它们。
+4. 保留仓库里已有的这些内容：
    - `.git`
    - `.gitignore`
    - `README.md`
    - `docs`
    - `game.txt`
 
-### Step 3: Open Unity And Wait
+### 第 3 步：打开 Unity，等待导入完成
 
-The first import can take several minutes. Wait until Unity stops compiling.
+第一次打开项目可能要导入几分钟。等 Unity 停止编译。
 
-If console errors appear, screenshot them and send them before changing random settings.
+如果 Console 出现红色报错，先截图发出来，不要乱改设置。
 
-### Step 4: Create The Main Scene
+### 第 4 步：创建主场景
 
-In Unity:
+在 Unity 里：
 
-1. Create folder `Assets/Scenes`.
-2. Save scene as:
+1. 创建文件夹 `Assets/Scenes`。
+2. 保存当前场景为：
 
 ```text
 Assets/Scenes/Main.unity
 ```
 
-Create scene objects:
+场景里创建这些对象：
 
 - `GameManager`
 - `TrackSpawner`
@@ -104,47 +104,47 @@ Create scene objects:
 - `Global Volume`
 - `Canvas`
 
-### Step 5: Make The Capsule Player
+### 第 5 步：创建胶囊体玩家
 
-1. `GameObject > 3D Object > Capsule`
-2. Rename to `Player`
-3. Position: `(0, 1, 0)`
-4. Add components:
+1. 菜单选择 `GameObject > 3D Object > Capsule`。
+2. 改名为 `Player`。
+3. Position 设置为 `(0, 1, 0)`。
+4. 添加组件：
    - `Character Controller`
    - `RunnerController`
    - `PlayerCollision`
    - `EnergyModeController`
    - `EnergyBurst`
-5. In `Character Controller`:
-   - Height: `2`
-   - Radius: `0.4`
-   - Center Y: `1`
-6. In `EnergyBurst`:
-   - Drag `Player` into `Runner`
+5. 在 `Character Controller` 里设置：
+   - Height：`2`
+   - Radius：`0.4`
+   - Center Y：`1`
+6. 在 `EnergyBurst` 组件里：
+   - 把 `Player` 自己拖到 `Runner` 字段。
 
-### Step 6: GameManager Setup
+### 第 6 步：设置 GameManager
 
-1. Create empty object `GameManager`.
-2. Add components:
+1. 创建空物体 `GameManager`。
+2. 添加组件：
    - `GameManager`
    - `ScoreManager`
-3. In `ScoreManager`:
-   - Drag `Player` into `Runner`
+3. 在 `ScoreManager` 里：
+   - 把 `Player` 拖到 `Runner` 字段。
 
-### Step 7: TrackSpawner Setup
+### 第 7 步：设置 TrackSpawner
 
-1. Create empty object `TrackSpawner`.
-2. Add component:
+1. 创建空物体 `TrackSpawner`。
+2. 添加组件：
    - `TrackSpawner`
-3. Drag `Player` into the `Player` field.
+3. 把 `Player` 拖到 `Player` 字段。
 
-For now, it needs one segment prefab from teammate 1.
+现在它还需要同学 1 做一个路段 prefab。
 
-## Teammate Tasks Based On Current Progress
+## 按当前进度分配任务
 
-## 你: Integrator And Gameplay
+## 你：总集成和核心玩法
 
-You own:
+你负责：
 
 ```text
 Assets/Scenes
@@ -153,30 +153,30 @@ Assets/Scripts/Player
 Assets/Scripts/UI
 ```
 
-Today and tomorrow:
+今天和明天要做：
 
-- Install Unity.
-- Create the URP project.
-- Open the project with no compile errors.
-- Create `Main.unity`.
-- Create capsule player.
-- Attach scripts.
-- Make sure Play Mode starts.
-- Ask me for help when Unity console errors appear.
+- 安装 Unity。
+- 创建 URP 项目。
+- 打开项目，确保没有编译错误。
+- 创建 `Main.unity`。
+- 创建胶囊体玩家。
+- 挂载脚本。
+- 确保可以进入 Play Mode。
+- Unity Console 有红色报错就发给我。
 
-Do not spend time on:
+暂时不要花时间做：
 
-- Final character model.
-- Pretty environment.
-- Complex Shader.
+- 最终角色模型。
+- 好看的大场景。
+- 复杂 Shader。
 
-Your success condition:
+你的验收标准：
 
-- You press Play and the capsule moves forward.
+- 按 Play 后，胶囊体能自动向前跑。
 
-## 同学 1: Track And Prefabs
+## 同学 1：路段和 prefab
 
-They own:
+同学 1 负责：
 
 ```text
 Assets/Prefabs/TrackSegments
@@ -186,43 +186,43 @@ Assets/Scripts/Track
 Assets/Scripts/Gameplay
 ```
 
-Today and tomorrow:
+今天和明天要做：
 
-- Wait until the Unity project exists.
-- Create folders:
+- 等 Unity 项目创建好以后开始做。
+- 创建文件夹：
   - `Assets/Prefabs/TrackSegments`
   - `Assets/Prefabs/Obstacles`
   - `Assets/Prefabs/Collectibles`
-- Make one test track segment prefab:
-  - root object: `TrackSegment_Test`
-  - add `TrackSegment` script to root
-  - add Cube child as floor
-  - floor position: `(0, -0.05, 15)`
-  - floor scale: `(8, 0.1, 30)`
-  - save prefab to `Assets/Prefabs/TrackSegments`
-- Make one obstacle prefab:
-  - Cube
-  - add `Obstacle`
-  - save to `Assets/Prefabs/Obstacles`
-- Make one collectible prefab:
-  - Sphere
-  - collider set to `Is Trigger`
-  - add `Collectible`
-  - save to `Assets/Prefabs/Collectibles`
+- 做一个测试路段 prefab：
+  - 根物体叫 `TrackSegment_Test`
+  - 根物体添加 `TrackSegment` 脚本
+  - 添加一个 Cube 子物体作为地面
+  - 地面 Position：`(0, -0.05, 15)`
+  - 地面 Scale：`(8, 0.1, 30)`
+  - 保存到 `Assets/Prefabs/TrackSegments`
+- 做一个障碍 prefab：
+  - 用 Cube
+  - 添加 `Obstacle`
+  - 保存到 `Assets/Prefabs/Obstacles`
+- 做一个收集物 prefab：
+  - 用 Sphere
+  - Collider 勾选 `Is Trigger`
+  - 添加 `Collectible`
+  - 保存到 `Assets/Prefabs/Collectibles`
 
-Do not spend time on:
+暂时不要花时间做：
 
-- 6 polished segments immediately.
-- Imported models.
-- Complicated random generation.
+- 一口气做 6 个精致路段。
+- 导入复杂模型。
+- 复杂随机生成。
 
-Their success condition:
+同学 1 的验收标准：
 
-- The track prefab can be dragged into `TrackSpawner > Segment Prefabs`.
+- 路段 prefab 可以被拖进 `TrackSpawner > Segment Prefabs` 列表。
 
-## 同学 2: Visuals And Report
+## 同学 2：视觉和报告
 
-They own:
+同学 2 负责：
 
 ```text
 Assets/Art
@@ -234,53 +234,53 @@ docs/asset_sources.md
 docs/graphics_notes.md
 ```
 
-Today and tomorrow:
+今天和明天要做：
 
-- Create folders:
+- 创建文件夹：
   - `Assets/Materials`
   - `Assets/VFX`
   - `Assets/Art`
   - `Assets/Shaders`
-- Create placeholder materials:
+- 创建占位材质：
   - `M_Track_Neon`
   - `M_Obstacle_Neon`
   - `M_Collectible_Energy`
-- Use URP/Lit materials first.
-- Enable emission colors:
-  - track: cyan/blue
-  - obstacle: red/magenta
-  - collectible: cyan/green
-- Help enable Bloom in `Global Volume`.
-- Start filling `docs/asset_sources.md` for any external assets.
+- 先用 URP/Lit 材质。
+- 开启 Emission：
+  - 跑道：青色或蓝色
+  - 障碍：红色或紫红色
+  - 收集物：青色或绿色
+- 帮忙在 `Global Volume` 里开启 Bloom。
+- 如果用了外部资源，开始填写 `docs/asset_sources.md`。
 
-Do not spend time on:
+暂时不要花时间做：
 
-- Final Shader Graph before the prototype runs.
-- Searching assets for hours.
-- Replacing the player model.
+- 在原型跑通前做最终 Shader Graph。
+- 找素材找几个小时。
+- 替换正式角色模型。
 
-Their success condition:
+同学 2 的验收标准：
 
-- The test scene looks dark + neon instead of default gray.
+- 测试场景看起来是暗色 + 霓虹，而不是 Unity 默认灰色。
 
-## Simple Git Rules For The Team
+## 小组 Git 规则
 
-Before working:
+开始工作前：
 
 ```powershell
 git pull
 ```
 
-After a working change:
+完成一个可运行改动后：
 
 ```powershell
 git status
 git add .
-git commit -m "Short description"
+git commit -m "简短描述这次改动"
 git push
 ```
 
-Do not commit these:
+不要提交这些目录：
 
 - `Library`
 - `Temp`
@@ -288,36 +288,36 @@ Do not commit these:
 - `Logs`
 - `Build`
 
-They are already ignored by `.gitignore`.
+这些已经在 `.gitignore` 里忽略了。
 
-## What To Send Me
+## 发给我什么最有用
 
-Send me screenshots or copied error text for:
+遇到问题时，发这些给我：
 
-- Unity Console errors.
-- Inspector fields you do not know how to fill.
-- Git errors.
-- The scene hierarchy if scripts do not work.
+- Unity Console 红色报错截图或文字。
+- Inspector 里不知道怎么填的字段截图。
+- Git 报错文字。
+- 脚本不生效时的 Hierarchy 截图。
 
-The most useful screenshot is:
+最有用的截图是同时包含：
 
 - Unity Console
-- selected object Inspector
-- Hierarchy visible on the left
+- 当前选中物体的 Inspector
+- 左边 Hierarchy
 
-## Do Not Panic About These
+## 不用慌的情况
 
-It is normal if:
+这些都是正常的：
 
-- Unity imports for several minutes.
-- `.meta` files appear everywhere.
-- Visual Studio opens automatically.
-- The first prototype uses only capsules and cubes.
-- The scene looks bad for the first few days.
+- Unity 第一次导入要几分钟。
+- 出现很多 `.meta` 文件。
+- Visual Studio 自动打开。
+- 第一版原型只有胶囊体和方块。
+- 前几天场景看起来很丑。
 
-It is not okay if:
+这些不正常，要尽快处理：
 
-- The project has compile errors.
-- You cannot enter Play Mode.
-- No one owns prefab creation.
-- Everyone edits the same scene at the same time.
+- 项目有编译错误。
+- 不能进入 Play Mode。
+- 没人负责 prefab。
+- 三个人同时改同一个场景。
