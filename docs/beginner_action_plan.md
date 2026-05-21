@@ -1,6 +1,6 @@
 # 新手行动计划
 
-这份文档给没有 Unity 经验的同学看。先按顺序做，不要在胶囊体原型跑通之前去抠美术、模型和复杂 Shader。
+这份文档给没有 Unity 经验的同学看。先按顺序做，不要在占位玩家原型跑通之前去抠美术、模型和复杂 Shader。
 
 ## 当前进度
 
@@ -11,18 +11,21 @@
 - 项目规划文档已添加。
 - 三人分工文档已添加。
 - 第一批 C# 脚本已经放在 `Assets/Scripts` 下。
+- Unity URP 工程已经创建到仓库根目录。
+- 已经有 `Packages/` 和 `ProjectSettings/`。
+- 当前 Unity Editor 版本是 `6000.4.7f1`。
 
 还没有完成：
 
-- Unity URP 工程还没有真正生成。
-- 还没有 `Packages/` 和 `ProjectSettings/`。
-- 主场景、prefab、材质、UI 还没有在 Unity 里创建。
+- 正式主场景 `Assets/Scenes/Main.unity` 还没有创建。
+- prefab、材质、UI 还没有在 Unity 里创建。
+- 场景对象还没有挂好脚本和 Inspector 引用。
 
 ## 第一目标
 
 48 小时内先做出这个原型：
 
-- 胶囊体玩家自动向前跑。
+- 占位胶囊体玩家自动向前跑。
 - A/D 可以左右换道。
 - Space 可以跳跃。
 - S 可以下滑。
@@ -33,15 +36,16 @@
 
 这个版本跑通，项目就可行。
 
-## 你先做什么
+## 同学 1 先做什么
 
-负责人：你
+负责人：同学 1
 
 ### 第 1 步：安装 Unity
 
 用 Unity Hub 安装：
 
-- Unity Editor：`2022.3 LTS`
+- Unity Editor：优先 `2022.3 LTS`
+- 如果你已经下载的是最新版 Unity Editor，也可以先用来做原型，不会妨碍基础玩法验证；只是团队最好尽量统一版本，减少后面排查问题的成本
 - 后面创建项目用的模板：`3D (URP)`
 - 必装模块：`Windows Build Support`
 - IDE：如果你电脑上没有 Visual Studio 或 Rider，就装 `Visual Studio Community`
@@ -104,7 +108,7 @@ Assets/Scenes/Main.unity
 - `Global Volume`
 - `Canvas`
 
-### 第 5 步：创建胶囊体玩家
+### 第 5 步：创建占位玩家
 
 1. 菜单选择 `GameObject > 3D Object > Capsule`。
 2. 改名为 `Player`。
@@ -138,13 +142,13 @@ Assets/Scenes/Main.unity
    - `TrackSpawner`
 3. 把 `Player` 拖到 `Player` 字段。
 
-现在它还需要同学 1 做一个路段 prefab。
+现在它还需要同学 2 做一个路段 prefab。
 
 ## 按当前进度分配任务
 
-## 你：总集成和核心玩法
+## 同学 1：总集成和核心玩法
 
-你负责：
+同学 1 负责：
 
 ```text
 Assets/Scenes
@@ -159,7 +163,7 @@ Assets/Scripts/UI
 - 创建 URP 项目。
 - 打开项目，确保没有编译错误。
 - 创建 `Main.unity`。
-- 创建胶囊体玩家。
+- 创建占位玩家。
 - 挂载脚本。
 - 确保可以进入 Play Mode。
 - Unity Console 有红色报错就发给我。
@@ -170,13 +174,15 @@ Assets/Scripts/UI
 - 好看的大场景。
 - 复杂 Shader。
 
-你的验收标准：
+胶囊体不是“最终方案”，只是最快验证玩法的占位物。想做得更好，通常要多花时间在角色模型、动画、碰撞体适配和表现细节上，所以前期先别把时间消耗在这里。
 
-- 按 Play 后，胶囊体能自动向前跑。
+同学 1 的验收标准：
 
-## 同学 1：路段和 prefab
+- 按 Play 后，占位玩家能自动向前跑。
 
-同学 1 负责：
+## 同学 2：路段和 prefab
+
+同学 2 负责：
 
 ```text
 Assets/Prefabs/TrackSegments
@@ -216,13 +222,13 @@ Assets/Scripts/Gameplay
 - 导入复杂模型。
 - 复杂随机生成。
 
-同学 1 的验收标准：
+同学 2 的验收标准：
 
 - 路段 prefab 可以被拖进 `TrackSpawner > Segment Prefabs` 列表。
 
-## 同学 2：视觉和报告
+## 同学 3：视觉和报告
 
-同学 2 负责：
+同学 3 负责：
 
 ```text
 Assets/Art
@@ -259,7 +265,7 @@ docs/graphics_notes.md
 - 找素材找几个小时。
 - 替换正式角色模型。
 
-同学 2 的验收标准：
+同学 3 的验收标准：
 
 - 测试场景看起来是暗色 + 霓虹，而不是 Unity 默认灰色。
 

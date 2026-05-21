@@ -2,17 +2,19 @@
 
 这份文档是《Neon Rush：霓虹轨道》的正式分工。目标是减少合并冲突，让每个人负责清楚的 Unity 目录。
 
+说明：第一版玩家可以先用 Capsule 胶囊体。它不是最终角色，只是为了最快验证跑酷玩法、碰撞和镜头。更好的角色表现需要模型、动画和碰撞调试，会明显增加时间成本，放到原型跑通后再做。
+
 ## 角色总览
 
 | 角色 | 负责人 | 主要职责 | 主要目录 |
 | --- | --- | --- | --- |
-| 总集成 / 核心玩法 | 你 | 项目集成、主场景搭建、核心玩法脚本、UI 逻辑、Git 协调 | `Assets/Scripts/Core`, `Assets/Scripts/Player`, `Assets/Scripts/UI`, `Assets/Scenes` |
-| 路段 / Prefab 搭建 | 同学 1 | 路段 prefab、障碍 prefab、收集物 prefab、摆放规则 | `Assets/Prefabs/TrackSegments`, `Assets/Prefabs/Obstacles`, `Assets/Prefabs/Collectibles`, `Assets/Scripts/Track`, `Assets/Scripts/Gameplay` |
-| 图形 / 资源 / 展示 | 同学 2 | 外部资源、材质、Shader、粒子、后处理、截图、报告素材 | `Assets/Art`, `Assets/Materials`, `Assets/Shaders`, `Assets/VFX`, `Assets/Prefabs/VFX`, `docs` |
+| 总集成 / 核心玩法 | 同学 1 | 项目集成、主场景搭建、核心玩法脚本、UI 逻辑、Git 协调 | `Assets/Scripts/Core`, `Assets/Scripts/Player`, `Assets/Scripts/UI`, `Assets/Scenes` |
+| 路段 / Prefab 搭建 | 同学 2 | 路段 prefab、障碍 prefab、收集物 prefab、摆放规则 | `Assets/Prefabs/TrackSegments`, `Assets/Prefabs/Obstacles`, `Assets/Prefabs/Collectibles`, `Assets/Scripts/Track`, `Assets/Scripts/Gameplay` |
+| 图形 / 资源 / 展示 | 同学 3 | 外部资源、材质、Shader、粒子、后处理、截图、报告素材 | `Assets/Art`, `Assets/Materials`, `Assets/Shaders`, `Assets/VFX`, `Assets/Prefabs/VFX`, `docs` |
 
-## 你：总集成 / 核心玩法
+## 同学 1：总集成 / 核心玩法
 
-负责人：你
+负责人：同学 1
 
 ### 必须完成
 
@@ -21,7 +23,7 @@
 - 创建场景根对象：
   - `GameManager`
   - `TrackSpawner`
-  - `Player`
+  - `Player`，第一版可以用 Capsule 占位
   - `Main Camera`
   - `Global Volume`
   - `Canvas`
@@ -50,8 +52,8 @@
 
 ### 不应该主要负责
 
-- 不要自己把所有障碍都摆完，除非同学 1 卡住。
-- 不要长时间调粒子和材质，除非同学 2 卡住。
+- 不要自己把所有障碍都摆完，除非同学 2 卡住。
+- 不要长时间调粒子和材质，除非同学 3 卡住。
 
 ### 验收标准
 
@@ -61,9 +63,9 @@
 - 分数和能量 UI 会更新。
 - 同学做的 prefab 可以拖进场景或 `TrackSpawner`，没有脚本报错。
 
-## 同学 1：路段 / Prefab 搭建
+## 同学 2：路段 / Prefab 搭建
 
-负责人：同学 1
+负责人：同学 2
 
 ### 必须完成
 
@@ -117,19 +119,19 @@
 
 ### 不应该主要负责
 
-- 不要改 `RunnerController.cs` 或 `GameManager.cs`，除非和你商量过。
-- 不要改全局后处理和 Shader 文件，除非和同学 2 商量过。
+- 不要改 `RunnerController.cs` 或 `GameManager.cs`，除非和同学 1 商量过。
+- 不要改全局后处理和 Shader 文件，除非和同学 3 商量过。
 
 ### 验收标准
 
 - 至少有 6 个路段 prefab。
 - 每个路段能无缝连接，没有明显错位。
 - 障碍和收集物的 Collider / Trigger 配置正确。
-- 你可以把这些路段 prefab 加到 `TrackSpawner` 后直接运行。
+- 同学 1 可以把这些路段 prefab 加到 `TrackSpawner` 后直接运行。
 
-## 同学 2：图形 / 资源 / 展示
+## 同学 3：图形 / 资源 / 展示
 
-负责人：同学 2
+负责人：同学 3
 
 ### 必须完成
 
@@ -184,7 +186,7 @@
 
 ### 不应该主要负责
 
-- 不要擅自改变同学 1 的路段 prefab 摆放规则。
+- 不要擅自改变同学 2 的路段 prefab 摆放规则。
 - 不要擅自改核心玩法状态脚本。
 
 ### 验收标准
@@ -217,18 +219,18 @@
 
 ## 目录归属规则
 
-- 你负责：
+- 同学 1 负责：
   - `Assets/Scenes`
   - `Assets/Scripts/Core`
   - `Assets/Scripts/Player`
   - `Assets/Scripts/UI`
-- 同学 1 负责：
+- 同学 2 负责：
   - `Assets/Prefabs/TrackSegments`
   - `Assets/Prefabs/Obstacles`
   - `Assets/Prefabs/Collectibles`
   - `Assets/Scripts/Track`
   - `Assets/Scripts/Gameplay`
-- 同学 2 负责：
+- 同学 3 负责：
   - `Assets/Art`
   - `Assets/Materials`
   - `Assets/Shaders`
@@ -241,13 +243,13 @@
 
 ## 建议分支名
 
-- 你：
+- 同学 1：
   - `feature/gameplay-core`
   - `feature/ui-game-loop`
-- 同学 1：
+- 同学 2：
   - `feature/track-prefabs`
   - `feature/obstacles-collectibles`
-- 同学 2：
+- 同学 3：
   - `feature/neon-graphics`
   - `feature/vfx-presentation`
 
@@ -255,39 +257,39 @@
 
 ### 第 1 天
 
-- 你：
+- 同学 1：
   - 创建 Unity URP 项目
   - 创建 `Main.unity`
-  - 添加占位玩家、相机、GameManager
-- 同学 1：
+  - 添加 Capsule 占位玩家、相机、GameManager
+- 同学 2：
   - 用基础几何体创建 2 个路段 prefab
   - 创建低障碍和能量收集物 prefab
-- 同学 2：
+- 同学 3：
   - 创建占位霓虹材质
   - 开启 Bloom 和 Color Adjustments
   - 填写 `docs/asset_sources.md` 的第一批资源来源
 
 ### 第 2 天
 
-- 你：
+- 同学 1：
   - 集成玩家移动和重开流程
   - 添加分数 UI
-- 同学 1：
+- 同学 2：
   - 扩展到 6 个路段 prefab
   - 添加高障碍和轨道阻挡障碍
-- 同学 2：
+- 同学 3：
   - 统一跑道和能量门材质
   - 创建收集粒子和撞击粒子
 
 ### 第 3 天
 
-- 你：
+- 同学 1：
   - 集成路段生成和碰撞
   - 验证可以连续跑 1 分钟
-- 同学 1：
+- 同学 2：
   - 修掉无解障碍组合
   - 测试路段接缝
-- 同学 2：
+- 同学 3：
   - 截第一批效果图
   - 写 Shader / 后处理方案说明
 

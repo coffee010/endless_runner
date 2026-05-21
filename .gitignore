@@ -11,6 +11,7 @@
 # Unity generated files
 *.csproj
 *.sln
+*.slnx
 *.suo
 *.tmp
 *.user
@@ -39,6 +40,8 @@ sysinfo.txt
 # OS and editor noise
 .DS_Store
 Thumbs.db
+.vs/
+.vsconfig
 .idea/
 .vscode/
 
