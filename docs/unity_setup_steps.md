@@ -7,8 +7,8 @@ Use Unity Hub to install Unity. Unity Hub is the normal tool for managing Editor
 Recommended setup:
 
 - Unity Hub: latest stable Hub.
-- Unity Editor: `Unity 2022.3 LTS`.
-- Template: `3D (URP)`.
+- Unity Editor: Unity 6 `6000.4.7f1`.
+- Template: `Universal 3D` or `3D (URP)`.
 - Required module:
   - `Windows Build Support (IL2CPP)` or `Windows Build Support (Mono)`.
 - Recommended module:
@@ -21,13 +21,13 @@ Recommended setup:
 
 Install only Windows build support for now. Extra platform modules can be added later from Unity Hub through `Installs > Manage > Add modules`.
 
-If you already have Unity 2023 LTS or Unity 6 installed, you can use it, but `2022.3 LTS` is the safer classroom choice because tutorials, packages and teammate compatibility are usually better.
+This project is already created with Unity 6 `6000.4.7f1`. Teammates should use the same Editor version when possible. Do not open this project with `2022.3 LTS`, because downgrading a Unity project can create compatibility issues.
 
 ## 1. Create The Project
 
 1. Open Unity Hub.
 2. Click `New project`.
-3. Choose `3D (URP)`.
+3. Choose `Universal 3D` or `3D (URP)`.
 4. Project name: `endless_runner` or `NeonRush`.
 5. Location: choose this repository folder: `D:\programing\code\cghw\endless_runner`.
 6. Create the project.

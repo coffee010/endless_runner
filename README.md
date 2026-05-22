@@ -4,8 +4,8 @@
 
 ## Recommended Setup
 
-- Unity: 2022.3 LTS 或 2023.2 LTS
-- Template: 3D URP
+- Unity: Unity 6 `6000.4.7f1`
+- Template: Universal 3D / 3D URP
 - Render Pipeline: Universal Render Pipeline
 - Input: 先用旧 Input Manager，降低实现风险；后期可换 New Input System
 - Target: Windows PC 演示包

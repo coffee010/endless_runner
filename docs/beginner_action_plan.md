@@ -13,7 +13,7 @@
 - 第一批 C# 脚本已经放在 `Assets/Scripts` 下。
 - Unity URP 工程已经创建到仓库根目录。
 - 已经有 `Packages/` 和 `ProjectSettings/`。
-- 当前 Unity Editor 版本是 `6000.4.7f1`。
+- 当前 Unity Editor 版本是 Unity 6 `6000.4.7f1`。
 
 还没有完成：
 
@@ -44,9 +44,9 @@
 
 用 Unity Hub 安装：
 
-- Unity Editor：优先 `2022.3 LTS`
-- 如果你已经下载的是最新版 Unity Editor，也可以先用来做原型，不会妨碍基础玩法验证；只是团队最好尽量统一版本，减少后面排查问题的成本
-- 后面创建项目用的模板：`3D (URP)`
+- Unity Editor：Unity 6 `6000.4.7f1`
+- 团队成员尽量安装同一个版本。不要用 `2022.3 LTS` 打开这个项目，因为项目已经由 Unity 6 创建，降版本打开更容易出兼容问题。
+- 后面创建项目用的模板：`Universal 3D` 或 `3D (URP)`
 - 必装模块：`Windows Build Support`
 - IDE：如果你电脑上没有 Visual Studio 或 Rider，就装 `Visual Studio Community`
 
@@ -62,7 +62,7 @@ D:\programing\code\cghw\endless_runner
 
 项目设置：
 
-- Template：`3D (URP)`
+- Template：`Universal 3D` 或 `3D (URP)`
 - Project name：`endless_runner` 或 `NeonRush`
 
 如果 Unity Hub 提示这个文件夹不是空的，不允许创建：

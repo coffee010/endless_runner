@@ -11,7 +11,7 @@
 
 ## Open Decisions To Confirm
 
-1. Unity version: use 2022.3 LTS unless your teacher requires another version.
+1. Unity version: this project uses Unity 6 `6000.4.7f1`; keep the team on the same Editor version unless the teacher requires another version.
 2. Team size and schedule: current plan assumes 3 people and about 2 weeks.
 3. Required course focus: if the teacher requires HLSL code instead of Shader Graph, we should adjust shader implementation.
 4. Asset policy: confirm whether Unity Asset Store, Mixamo, Sketchfab, Kenney, Freesound are allowed.
