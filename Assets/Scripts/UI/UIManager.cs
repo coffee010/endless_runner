@@ -1,12 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public sealed class UIManager : MonoBehaviour
 {
     [SerializeField] private ScoreManager scoreManager;
     [SerializeField] private EnergyBurst energyBurst;
-    [SerializeField] private Text scoreText;
-    [SerializeField] private Text speedText;
+    [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI speedText;
     [SerializeField] private Slider energySlider;
     [SerializeField] private GameObject gameOverPanel;
 
