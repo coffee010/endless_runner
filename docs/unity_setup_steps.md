@@ -87,8 +87,8 @@ Assets/Scripts/UI
   - Use URP quality level.
 - `Edit > Project Settings > Graphics`
   - Confirm URP asset is assigned.
-- `Edit > Project Settings > Input Manager`
-  - Keep default axes for now.
+- `Edit > Project Settings > Player > Other Settings`
+  - Active Input Handling: `Input System Package (New)`.
 
 ## 4. Main Scene
 

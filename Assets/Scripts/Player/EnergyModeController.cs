@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public enum EnergyMode
 {
@@ -27,23 +28,29 @@ public sealed class EnergyModeController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard == null)
+        {
+            return;
+        }
+
+        if (keyboard.digit1Key.wasPressedThisFrame)
         {
             SetMode(EnergyMode.Red);
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        else if (keyboard.digit2Key.wasPressedThisFrame)
         {
             SetMode(EnergyMode.Blue);
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        else if (keyboard.digit3Key.wasPressedThisFrame)
         {
             SetMode(EnergyMode.Green);
         }
-        else if (Input.GetKeyDown(KeyCode.Q))
+        else if (keyboard.qKey.wasPressedThisFrame)
         {
             Cycle(-1);
         }
-        else if (Input.GetKeyDown(KeyCode.E))
+        else if (keyboard.eKey.wasPressedThisFrame)
         {
             Cycle(1);
         }

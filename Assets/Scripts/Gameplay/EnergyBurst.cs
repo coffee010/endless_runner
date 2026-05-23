@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public sealed class EnergyBurst : MonoBehaviour
 {
@@ -16,7 +17,8 @@ public sealed class EnergyBurst : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F) && Energy >= maxEnergy)
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard != null && keyboard.fKey.wasPressedThisFrame && Energy >= maxEnergy)
         {
             TriggerBurst();
         }

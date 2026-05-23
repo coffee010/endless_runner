@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public enum GameState
@@ -38,7 +39,8 @@ public sealed class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (State == GameState.GameOver && Input.GetKeyDown(KeyCode.R))
+        Keyboard keyboard = Keyboard.current;
+        if (State == GameState.GameOver && keyboard != null && keyboard.rKey.wasPressedThisFrame)
         {
             Restart();
         }
