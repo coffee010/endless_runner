@@ -51,7 +51,7 @@ public sealed class UIManager : MonoBehaviour
     {
         if (speedText != null && scoreManager != null)
         {
-            speedText.text = $"Speed +{scoreManager.SpeedBonus:0.0}";
+            speedText.text = $"Speed {scoreManager.CurrentSpeed:0.0}";
         }
     }
 

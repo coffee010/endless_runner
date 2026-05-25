@@ -15,6 +15,7 @@ public sealed class ScoreManager : MonoBehaviour
     public int Score => Mathf.FloorToInt(distanceScore) + bonusScore;
     public float Distance => distanceScore / Mathf.Max(distanceScoreMultiplier, 0.0001f);
     public float SpeedBonus => speedBonus;
+    public float CurrentSpeed => runner != null ? runner.CurrentSpeed : speedBonus;
 
     public event Action<int> ScoreChanged;
 

@@ -79,3 +79,11 @@ Assets/
 Team responsibilities are defined in `docs/team_tasks.md`.
 
 For first-time Unity users, follow `docs/beginner_action_plan.md` before polishing art or shaders.
+
+## Asset Disclaimer
+
+The character model asset used in this project is based on a model provided by miHoYo/HoYoverse and is included only for personal learning, classroom practice, and non-commercial demonstration.
+
+All rights to the original character, model design, textures, and related intellectual property belong to miHoYo/HoYoverse and their respective rights holders. This project does not claim ownership of those assets.
+
+Please do not redistribute, sell, or use the model or its extracted parts for commercial purposes. Anyone who reuses, modifies, distributes, or otherwise uses these assets is responsible for ensuring that their use complies with the original asset rules and applicable law. The project author is not responsible for unauthorized or improper third-party use.
