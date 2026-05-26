@@ -65,6 +65,19 @@
 - 分数和能量 UI 会更新。
 - 同学做的 prefab 可以拖进场景或 `TrackSpawner`，没有脚本报错。
 
+### 阶段完成记录
+
+2026-05-26：
+
+- 已引入纳西妲人物模型，并替换原先的 Capsule 占位角色显示。
+- 已导入 Starter Assets 第三人称动画资源，并将角色 Animator 接入 `StarterAssetsThirdPerson.controller`。
+- 已新增 `RunnerAnimatorBridge`，把跑酷控制器状态同步到 Animator 参数。
+- 已完成跑步、跳跃、下滑动作接入：
+  - 跑步：通过 `Speed` / `MotionSpeed` 驱动。
+  - 跳跃：通过 `Jump` / `FreeFall` / `Grounded` 驱动。
+  - 下滑：通过 `Slide` 参数和 Mixamo 下滑动画驱动。
+- 已确认 `S` 或向下方向键触发下滑逻辑，动画由 `runner.IsSliding` 同步。
+
 ## 同学 2：路段 / Prefab 搭建
 
 负责人：同学 2
