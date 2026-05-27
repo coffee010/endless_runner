@@ -7504,6 +7504,8 @@ MonoBehaviour:
   initialSegments: 5
   keepSegmentsBehind: 2
   defaultSegmentLength: 30
+  redSegmentEvery: 3
+  redSegmentOffset: 2
 --- !u!4 &1738319979
 Transform:
   m_ObjectHideFlags: 0
@@ -8962,6 +8964,8 @@ GameObject:
   - component: {fileID: 2084248084}
   - component: {fileID: 2084248083}
   - component: {fileID: 2084248086}
+  - component: {fileID: 2084248087}
+  - component: {fileID: 2084248088}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -8986,8 +8990,8 @@ Camera:
   m_GameObject: {fileID: 2084248082}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.012, g: 0.016, b: 0.024, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -9066,7 +9070,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -9087,6 +9091,91 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &2084248087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2084248082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d5d076ff1c14ce3b66f408bbafbc0b5, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::RunnerCameraFollow
+  target: {fileID: 485434750}
+  offset: {x: 0, y: 5, z: -8}
+  lookAtOffset: {x: 0, y: 1.5, z: 5}
+  positionSmoothTime: 0.08
+  rotationSmoothSpeed: 12
+  followLaneX: 0
+--- !u!114 &2084248088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2084248082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2360e602795f4b7fa305c4a08dbaf677, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SpeedLinesOverlay
+  runner: {fileID: 485434742}
+  tint: {r: 0.35, g: 0.8, b: 1, a: 1}
+  minSpeed: 7
+  fullIntensitySpeed: 17
+  maxIntensity: 0.12
+  overlayDistance: 1
+--- !u!1 &2084248090
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2084248092}
+  - component: {fileID: 2084248091}
+  m_Layer: 0
+  m_Name: Global Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2084248091
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2084248090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 10fc4df2da32a41aaa32d77bc913491c, type: 2}
+--- !u!4 &2084248092
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2084248090}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2090977776
 MonoBehaviour:
   m_ObjectHideFlags: 0

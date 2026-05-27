@@ -43,4 +43,10 @@ public sealed class ScoreManager : MonoBehaviour
         bonusScore += Mathf.Max(0, value);
         ScoreChanged?.Invoke(Score);
     }
+
+    public void AddPenalty(int value)
+    {
+        bonusScore -= Mathf.Max(0, value);
+        ScoreChanged?.Invoke(Score);
+    }
 }

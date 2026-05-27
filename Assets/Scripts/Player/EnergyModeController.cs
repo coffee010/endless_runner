@@ -5,8 +5,7 @@ using UnityEngine.InputSystem;
 public enum EnergyMode
 {
     Red,
-    Blue,
-    Green
+    Blue
 }
 
 public sealed class EnergyModeController : MonoBehaviour
@@ -42,17 +41,13 @@ public sealed class EnergyModeController : MonoBehaviour
         {
             SetMode(EnergyMode.Blue);
         }
-        else if (keyboard.digit3Key.wasPressedThisFrame)
-        {
-            SetMode(EnergyMode.Green);
-        }
         else if (keyboard.qKey.wasPressedThisFrame)
         {
-            Cycle(-1);
+            ToggleMode();
         }
         else if (keyboard.eKey.wasPressedThisFrame)
         {
-            Cycle(1);
+            ToggleMode();
         }
     }
 
@@ -67,10 +62,8 @@ public sealed class EnergyModeController : MonoBehaviour
         ModeChanged?.Invoke(CurrentMode);
     }
 
-    private void Cycle(int direction)
+    private void ToggleMode()
     {
-        int count = Enum.GetValues(typeof(EnergyMode)).Length;
-        int next = ((int)CurrentMode + direction + count) % count;
-        SetMode((EnergyMode)next);
+        SetMode(CurrentMode == EnergyMode.Red ? EnergyMode.Blue : EnergyMode.Red);
     }
 }

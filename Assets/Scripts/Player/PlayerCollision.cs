@@ -35,7 +35,7 @@ public sealed class PlayerCollision : MonoBehaviour
             EnergyMode currentMode = energyModeController != null ? energyModeController.CurrentMode : EnergyMode.Blue;
             if (!gate.TryPass(currentMode))
             {
-                FailIfVulnerable();
+                scoreManager?.AddPenalty(gate.WrongColorPenalty);
             }
         }
     }
