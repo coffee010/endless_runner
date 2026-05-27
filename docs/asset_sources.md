@@ -4,7 +4,10 @@ Record every external asset used in the project. This is important for the repor
 
 | Asset | Type | Source URL | License | Modified? | Used For |
 | --- | --- | --- | --- | --- | --- |
-| Example Player Model | Character | TBD | TBD | TBD | Player |
+| Neon materials | Material | Created by team | Original | Yes | Track, obstacles, gates, collectibles |
+| Flowing neon track shader | Shader Graph | Created by team | Original | Yes | Moving neon light effect on track |
+| Particle effects | VFX | Created in Unity Particle System | Original | Yes | Collect, hit, gate pass, burst effects |
+| Post-processing profile | URP Volume Profile | Created by team | Original | Yes | Bloom, color adjustments, vignette |
 
 ## Recommended Sources
 
