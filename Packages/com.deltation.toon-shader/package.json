@@ -1,0 +1,17 @@
+{
+  "name": "com.deltation.toon-shader",
+  "displayName": "Toon Shader",
+  "description": "Stylized toon shader for URP.",
+  "version": "0.4.8",
+  "unity": "6000.0",
+  "dependencies": {
+    "com.unity.render-pipelines.universal": "17.4.0"
+  },
+  "type": "shader",
+  "unityRelease": "0f1",
+  "author": {
+    "name": "Vladislav Kantaev",
+    "email": "vvkantaev@yandex.ru",
+    "url": "https://deltation.tatar/"
+  }
+}

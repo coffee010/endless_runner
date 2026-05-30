@@ -4,7 +4,6 @@ using UnityEngine;
 public sealed class PlayerCollision : MonoBehaviour
 {
     [SerializeField] private ScoreManager scoreManager;
-    [SerializeField] private EnergyModeController energyModeController;
 
     private RunnerController runner;
 
@@ -27,16 +26,6 @@ public sealed class PlayerCollision : MonoBehaviour
         if (other.TryGetComponent(out Collectible collectible))
         {
             collectible.Collect(scoreManager);
-            return;
-        }
-
-        if (other.TryGetComponent(out ColorGate gate))
-        {
-            EnergyMode currentMode = energyModeController != null ? energyModeController.CurrentMode : EnergyMode.Blue;
-            if (!gate.TryPass(currentMode))
-            {
-                scoreManager?.AddPenalty(gate.WrongColorPenalty);
-            }
         }
     }
 

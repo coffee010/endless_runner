@@ -14,19 +14,19 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
-  m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  m_FogMode: 3
-  m_FogDensity: 0.01
-  m_LinearFogStart: 0
-  m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
-  m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
-  m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 1
-  m_AmbientMode: 0
+  m_Fog: 1
+  m_FogColor: {r: 0.055, g: 0.07, b: 0.12, a: 1}
+  m_FogMode: 1
+  m_FogDensity: 0.05
+  m_LinearFogStart: 18
+  m_LinearFogEnd: 92
+  m_AmbientSkyColor: {r: 0.16, g: 0.19, b: 0.26, a: 1}
+  m_AmbientEquatorColor: {r: 0.1, g: 0.085, b: 0.14, a: 1}
+  m_AmbientGroundColor: {r: 0.045, g: 0.04, b: 0.065, a: 1}
+  m_AmbientIntensity: 1.05
+  m_AmbientMode: 1
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: c82a334cf5a5e47978749c210cee72a7, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -1650,14 +1650,14 @@ Light:
   m_Enabled: 1
   serializedVersion: 13
   m_Type: 1
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
+  m_Color: {r: 0.62, g: 0.74, b: 1, a: 1}
+  m_Intensity: 0.35
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
-    m_Type: 2
+    m_Type: 0
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -2281,7 +2281,7 @@ GameObject:
   - component: {fileID: 485434745}
   - component: {fileID: 485434744}
   - component: {fileID: 485434743}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2308,6 +2308,7 @@ MonoBehaviour:
   gravity: -28
   slideDuration: 0.75
   slideHeight: 1
+  playerLayerName: Player
 --- !u!114 &485434743
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2324,6 +2325,12 @@ MonoBehaviour:
   maxEnergy: 100
   invulnerableSeconds: 2
   clearDistance: 25
+  clearWidth: 10
+  clearHeight: 10
+  clearObstacleLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  maxClearHits: 32
   burstVfxPrefab: {fileID: 0}
 --- !u!114 &485434744
 MonoBehaviour:
@@ -2351,7 +2358,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCollision
   scoreManager: {fileID: 1435136336}
-  energyModeController: {fileID: 485434744}
 --- !u!143 &485434746
 CharacterController:
   m_ObjectHideFlags: 0
@@ -7500,10 +7506,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TrackSpawner
   player: {fileID: 485434750}
   segmentPrefabs:
-  - {fileID: 1163631971218430493, guid: 79653a2e87357c64fa51184012c3e2f4, type: 3}
+  - {fileID: 8169123552413622016, guid: fde3e4f1e11bb1940ac3c44cb4d36c25, type: 3}
   initialSegments: 5
   keepSegmentsBehind: 2
-  defaultSegmentLength: 30
+  defaultSegmentLength: 48
   redSegmentEvery: 3
   redSegmentOffset: 2
 --- !u!4 &1738319979
@@ -8991,7 +8997,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.012, g: 0.016, b: 0.024, a: 0}
+  m_BackGroundColor: {r: 0.012, g: 0.016, b: 0.034, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -9101,7 +9107,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7d5d076ff1c14ce3b66f408bbafbc0b5, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RunnerCameraFollow
   target: {fileID: 485434750}
   offset: {x: 0, y: 5, z: -8}
@@ -9119,7 +9125,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2360e602795f4b7fa305c4a08dbaf677, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpeedLinesOverlay
   runner: {fileID: 485434742}
   tint: {r: 0.35, g: 0.8, b: 1, a: 1}
@@ -9154,8 +9160,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_IsGlobal: 1
   priority: 0
   blendDistance: 0
@@ -15791,3 +15797,4 @@ SceneRoots:
   - {fileID: 554701770}
   - {fileID: 1887872966}
   - {fileID: 2008020464}
+  - {fileID: 2084248092}

@@ -8,15 +8,18 @@ public sealed class TrackSegment : MonoBehaviour
     [SerializeField] private ColorGate[] themedColorGates;
     [SerializeField] private Renderer[] themedRenderers;
     [SerializeField] private float themeEmissionIntensity = 1.8f;
-    [SerializeField] private bool applyCyberTrackMaterial = true;
+    [SerializeField] private bool tintThemedBaseColor = false;
+    [SerializeField] private bool applyCyberTrackMaterial = false;
     [SerializeField] private float cyberGridDensity = 18f;
     [SerializeField] private float cyberFlowSpeed = 2.2f;
     [SerializeField] private bool buildProceduralScenery = true;
+    [SerializeField] private string environmentLayerName = "CyberEnvironment";
 
     private MaterialPropertyBlock themePropertyBlock;
     private Material cyberTrackMaterial;
     private Material sceneryMaterial;
     private Transform sceneryRoot;
+    private int environmentLayer = -2;
 
     public float Length => length;
 
@@ -35,6 +38,8 @@ public sealed class TrackSegment : MonoBehaviour
 
     public void ApplyColorTheme(EnergyMode mode)
     {
+        ApplyEnvironmentLayer(transform);
+
         if (!configureColorGates)
         {
             return;
@@ -83,8 +88,12 @@ public sealed class TrackSegment : MonoBehaviour
             }
 
             targetRenderer.GetPropertyBlock(themePropertyBlock);
-            themePropertyBlock.SetColor("_BaseColor", Color.Lerp(Color.black, baseColor, 0.55f));
-            themePropertyBlock.SetColor("_Color", baseColor);
+            if (tintThemedBaseColor)
+            {
+                themePropertyBlock.SetColor("_BaseColor", Color.Lerp(Color.black, baseColor, 0.55f));
+                themePropertyBlock.SetColor("_Color", baseColor);
+            }
+
             themePropertyBlock.SetColor("_EmissionColor", emissionColor);
             themePropertyBlock.SetFloat("_GridDensity", cyberGridDensity);
             themePropertyBlock.SetFloat("_FlowSpeed", cyberFlowSpeed);
@@ -102,7 +111,7 @@ public sealed class TrackSegment : MonoBehaviour
 
         if (cyberTrackMaterial == null)
         {
-            Shader shader = Shader.Find("NeonRush/CyberTrack");
+            Shader shader = Shader.Find("DELTation/Toon Shader");
             if (shader != null)
             {
                 cyberTrackMaterial = new Material(shader);
@@ -125,6 +134,7 @@ public sealed class TrackSegment : MonoBehaviour
         GameObject root = new GameObject("CyberScenery");
         root.transform.SetParent(transform, false);
         sceneryRoot = root.transform;
+        ApplyEnvironmentLayer(root.transform);
 
         Color themeColor = ColorGate.GetModeColor(mode);
         Color wallColor = new Color(0.018f, 0.02f, 0.03f);
@@ -150,6 +160,7 @@ public sealed class TrackSegment : MonoBehaviour
         part.transform.SetParent(sceneryRoot, false);
         part.transform.localPosition = localPosition;
         part.transform.localScale = localScale;
+        ApplyEnvironmentLayer(part.transform);
 
         Collider partCollider = part.GetComponent<Collider>();
         if (partCollider != null)
@@ -165,7 +176,8 @@ public sealed class TrackSegment : MonoBehaviour
 
         if (sceneryMaterial == null)
         {
-            Shader shader = Shader.Find("Universal Render Pipeline/Unlit");
+            Shader shader = Shader.Find("DELTation/Toon Shader");
+            shader ??= Shader.Find("Universal Render Pipeline/Unlit");
             if (shader == null)
             {
                 shader = Shader.Find("Unlit/Color");
@@ -189,5 +201,35 @@ public sealed class TrackSegment : MonoBehaviour
         themePropertyBlock.SetColor("_Color", color);
         themePropertyBlock.SetColor("_EmissionColor", color);
         renderer.SetPropertyBlock(themePropertyBlock);
+    }
+
+    private void ApplyEnvironmentLayer(Transform root)
+    {
+        if (root == null)
+        {
+            return;
+        }
+
+        int layer = GetEnvironmentLayer();
+        if (layer < 0)
+        {
+            return;
+        }
+
+        root.gameObject.layer = layer;
+        foreach (Transform child in root)
+        {
+            ApplyEnvironmentLayer(child);
+        }
+    }
+
+    private int GetEnvironmentLayer()
+    {
+        if (environmentLayer == -2)
+        {
+            environmentLayer = LayerMask.NameToLayer(environmentLayerName);
+        }
+
+        return environmentLayer;
     }
 }

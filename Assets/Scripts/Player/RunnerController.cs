@@ -21,6 +21,9 @@ public sealed class RunnerController : MonoBehaviour
     [SerializeField] private float slideDuration = 0.75f;
     [SerializeField] private float slideHeight = 1f;
 
+    [Header("Rendering")]
+    [SerializeField] private string playerLayerName = "Player";
+
     private CharacterController controller;
     private Vector3 velocity;
     private int currentLane;
@@ -37,6 +40,8 @@ public sealed class RunnerController : MonoBehaviour
 
     private void Awake()
     {
+        ApplyPlayerLayer(transform);
+
         controller = GetComponent<CharacterController>();
         originalHeight = controller.height;
         originalCenter = controller.center;
@@ -136,5 +141,20 @@ public sealed class RunnerController : MonoBehaviour
         IsInvulnerable = true;
         yield return new WaitForSeconds(seconds);
         IsInvulnerable = false;
+    }
+
+    private void ApplyPlayerLayer(Transform root)
+    {
+        int playerLayer = LayerMask.NameToLayer(playerLayerName);
+        if (root == null || playerLayer < 0)
+        {
+            return;
+        }
+
+        root.gameObject.layer = playerLayer;
+        foreach (Transform child in root)
+        {
+            ApplyPlayerLayer(child);
+        }
     }
 }

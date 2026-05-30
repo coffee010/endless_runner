@@ -1,0 +1,403 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.Rendering;
+using UnityBlendMode = UnityEngine.Rendering.BlendMode;
+
+// ReSharper disable Unity.PreferAddressByIdToGraphicsParams
+
+namespace DELTation.ToonShader.Editor
+{
+	[UsedImplicitly]
+	public class ToonShaderEditor : ToonShaderEditorBase
+	{
+		private const int QueueOffsetRange = 50;
+
+		private static readonly Dictionary<(UnityBlendMode src, UnityBlendMode dst), BlendMode>
+			UnityBlendModeToBlendMode =
+				new()
+				{
+					[(UnityBlendMode.SrcAlpha, UnityBlendMode.OneMinusSrcAlpha)] = BlendMode.Alpha,
+					[(UnityBlendMode.One, UnityBlendMode.OneMinusSrcAlpha)] = BlendMode.Premultiply,
+					[(UnityBlendMode.One, UnityBlendMode.One)] = BlendMode.Additive,
+					[(UnityBlendMode.DstColor, UnityBlendMode.Zero)] = BlendMode.Multiply,
+				};
+
+		protected override bool RenderQueueField => false;
+
+		protected override void DrawProperties(MaterialEditor materialEditor, MaterialProperty[] properties,
+			Material material)
+		{
+			if (Foldout("Surface Options"))
+				DrawSurfaceProperties(materialEditor, properties);
+			DrawCustomProperties(materialEditor, properties, material);
+			if (Foldout("Color", true))
+				DrawColorProperties(materialEditor, properties);
+			if (RampFoldout())
+				DrawRampProperties(materialEditor, properties, material);
+			if (Foldout("Normal Map", true))
+				DrawNormalMapProperties(materialEditor, properties, material);
+			if (Foldout("Emission", true))
+				DrawEmissionProperties(materialEditor, properties, material);
+			if (Foldout("Rim"))
+				DrawRimProperties(materialEditor, properties, material);
+			if (Foldout("Specular"))
+				DrawSpecularProperties(materialEditor, properties, material);
+			if (Foldout("Reflections"))
+				DrawReflectionProperties(materialEditor, properties, material);
+			if (MiscFoldout())
+				DrawMiscProperties(materialEditor, properties, material);
+		}
+
+		private void DrawCustomProperties(MaterialEditor materialEditor, MaterialProperty[] properties,
+			Material material)
+		{
+			var shader = material.shader;
+			var customPropertyIndices = new List<int>();
+
+			for (var i = 0; i < properties.Length; i++)
+			{
+				var attributes = shader.GetPropertyAttributes(i);
+				if (attributes.Contains("CustomProperty"))
+					customPropertyIndices.Add(i);
+			}
+
+			if (customPropertyIndices.Count == 0) return;
+
+			if (Foldout("Custom"))
+				foreach (var index in customPropertyIndices)
+				{
+					DrawProperty(materialEditor, properties, properties[index].name);
+				}
+		}
+
+		private static void DrawNormalMapProperties(MaterialEditor materialEditor, MaterialProperty[] properties,
+			Material material)
+		{
+			EditorGUI.BeginChangeCheck();
+			const string bumpMapProperty = "_BumpMap";
+			DrawProperty(materialEditor, properties, bumpMapProperty);
+
+			if (EditorGUI.EndChangeCheck())
+			{
+				var property = FindProperty(bumpMapProperty, properties);
+				const string normalMapKeyword = "_NORMALMAP";
+				if (property.textureValue == null)
+					material.DisableKeyword(normalMapKeyword);
+				else
+					material.EnableKeyword(normalMapKeyword);
+				materialEditor.PropertiesChanged();
+			}
+		}
+
+		private static void DrawSurfaceProperties(MaterialEditor materialEditor, MaterialProperty[] properties)
+		{
+			DrawPropertyCustom(materialEditor, properties, "Surface Type", DrawSurfaceType);
+			if (IsTransparent(properties))
+				DrawPropertyCustom(materialEditor, properties, "Blending Mode", DrawBlendMode);
+
+			DrawPropertyCustom(materialEditor, properties, "Alpha Clipping", DrawAlphaClip);
+			if (IsAlphaClip(properties))
+				DrawProperty(materialEditor, properties, "_Cutoff");
+
+			DrawProperty(materialEditor, properties, "_Cull");
+		}
+
+		private static bool IsAlphaClip(MaterialProperty[] properties) =>
+			FindProperty("_AlphaClip", properties).floatValue > 0.5f;
+
+		private static bool IsTransparent(MaterialProperty[] properties) =>
+			(SurfaceType)FindProperty("_Surface", properties).floatValue == SurfaceType.Transparent;
+
+		private static void DrawAlphaClip(MaterialEditor materialEditor, MaterialProperty[] properties)
+		{
+			var property = FindProperty("_AlphaClip", properties);
+			var alphaClip = property.floatValue > 0.5f;
+
+			EditorGUI.showMixedValue = property.hasMixedValue;
+			EditorGUI.BeginChangeCheck();
+			var newAlphaClip = EditorGUILayout.Toggle(alphaClip);
+
+			if (EditorGUI.EndChangeCheck())
+			{
+				property.floatValue = newAlphaClip ? 1f : 0f;
+				materialEditor.PropertiesChanged();
+				TryUpdateSurfaceData(materialEditor, properties);
+			}
+
+			EditorGUI.showMixedValue = false;
+		}
+
+		private static void DrawSurfaceType(MaterialEditor materialEditor, MaterialProperty[] properties)
+		{
+			var surfaceProperty = FindProperty("_Surface", properties);
+			var surfaceType = (SurfaceType)surfaceProperty.floatValue;
+
+			EditorGUI.showMixedValue = surfaceProperty.hasMixedValue;
+			EditorGUI.BeginChangeCheck();
+			var newSurfaceType = (SurfaceType)EditorGUILayout.EnumPopup(surfaceType);
+
+			if (EditorGUI.EndChangeCheck())
+			{
+				surfaceProperty.floatValue = (float)newSurfaceType;
+				materialEditor.PropertiesChanged();
+				TryUpdateSurfaceData(materialEditor, properties);
+			}
+
+			EditorGUI.showMixedValue = false;
+		}
+
+		private static void TryUpdateSurfaceData(MaterialEditor materialEditor, MaterialProperty[] properties)
+		{
+			var surfaceProperty = FindProperty("_Surface", properties);
+			var surfaceType = (SurfaceType)surfaceProperty.floatValue;
+			var material = (Material)materialEditor.target;
+			var alphaClip = IsAlphaClip(properties);
+
+			const string alphaTestOnKeyword = "_ALPHATEST_ON";
+			if (alphaClip)
+				material.EnableKeyword(alphaTestOnKeyword);
+			else
+				material.DisableKeyword(alphaTestOnKeyword);
+
+			const string surfaceTypeTransparentKeyword = "_SURFACE_TYPE_TRANSPARENT";
+			if (surfaceType == SurfaceType.Transparent)
+				material.EnableKeyword(surfaceTypeTransparentKeyword);
+			else
+				material.DisableKeyword(surfaceTypeTransparentKeyword);
+
+			const string alphapremultiplyOnKeyword = "_ALPHAPREMULTIPLY_ON";
+			if (surfaceType == SurfaceType.Opaque)
+			{
+				if (alphaClip)
+				{
+					material.renderQueue = (int)RenderQueue.AlphaTest;
+					material.SetOverrideTag("RenderType", "TransparentCutout");
+				}
+				else
+				{
+					material.renderQueue = (int)RenderQueue.Geometry;
+					material.SetOverrideTag("RenderType", "Opaque");
+				}
+
+				material.renderQueue +=
+					material.HasProperty("_QueueOffset") ? (int)material.GetFloat("_QueueOffset") : 0;
+				material.SetInt("_SrcBlend", (int)UnityBlendMode.One);
+				material.SetInt("_DstBlend", (int)UnityBlendMode.Zero);
+				material.SetInt("_ZWrite", 1);
+				material.DisableKeyword(alphapremultiplyOnKeyword);
+				material.SetShaderPassEnabled("ShadowCaster", true);
+			}
+			else
+			{
+				var srcBlendProperty = FindProperty("_SrcBlend", properties);
+				var dstBlendProperty = FindProperty("_DstBlend", properties);
+				var blendProperty = FindProperty("_Blend", properties);
+
+				var blendMode = (BlendMode)blendProperty.floatValue;
+				var (src, dst) = ConvertBlendModeToUnityBlendMode(blendMode);
+				srcBlendProperty.floatValue = (float)src;
+				dstBlendProperty.floatValue = (float)dst;
+
+
+				switch (blendMode)
+				{
+					case BlendMode.Alpha:
+						material.DisableKeyword(alphapremultiplyOnKeyword);
+						break;
+					case BlendMode.Premultiply:
+						material.EnableKeyword(alphapremultiplyOnKeyword);
+						break;
+					case BlendMode.Additive:
+						material.DisableKeyword(alphapremultiplyOnKeyword);
+						break;
+					case BlendMode.Multiply:
+						material.DisableKeyword(alphapremultiplyOnKeyword);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+
+				material.SetOverrideTag("RenderType", "Transparent");
+				material.SetInt("_ZWrite", 0);
+				material.renderQueue = (int)RenderQueue.Transparent;
+				material.renderQueue +=
+					material.HasProperty("_QueueOffset") ? (int)material.GetFloat("_QueueOffset") : 0;
+				material.SetShaderPassEnabled("ShadowCaster", false);
+			}
+
+			materialEditor.PropertiesChanged();
+		}
+
+		private static void DrawBlendMode(MaterialEditor materialEditor, MaterialProperty[] properties)
+		{
+			var blendProperty = FindProperty("_Blend", properties);
+			var currentBlendMode = (BlendMode)blendProperty.floatValue;
+
+			EditorGUI.showMixedValue =
+				blendProperty.hasMixedValue || FindProperty("_Surface", properties).hasMixedValue;
+			EditorGUI.BeginChangeCheck();
+			var newBlendMode = (BlendMode)EditorGUILayout.EnumPopup(currentBlendMode);
+
+
+			var (newSrcBlend, newDstBlend) = ConvertBlendModeToUnityBlendMode(newBlendMode);
+
+			if (EditorGUI.EndChangeCheck())
+			{
+				var srcBlendProperty = FindProperty("_SrcBlend", properties);
+				srcBlendProperty.floatValue = (float)newSrcBlend;
+				var dstBlendProperty = FindProperty("_DstBlend", properties);
+				dstBlendProperty.floatValue = (float)newDstBlend;
+				blendProperty.floatValue = (float)newBlendMode;
+				materialEditor.PropertiesChanged();
+				TryUpdateSurfaceData(materialEditor, properties);
+			}
+
+			EditorGUI.showMixedValue = false;
+		}
+
+		private static void DrawPropertyCustom(MaterialEditor materialEditor, MaterialProperty[] properties,
+			string label,
+			Action<MaterialEditor, MaterialProperty[]> draw)
+		{
+			GUILayout.BeginHorizontal();
+			GUILayout.Label(label);
+			GUILayout.FlexibleSpace();
+
+			draw(materialEditor, properties);
+
+			GUILayout.EndHorizontal();
+		}
+
+		private static (UnityBlendMode src, UnityBlendMode dst) ConvertBlendModeToUnityBlendMode(BlendMode blendMode)
+		{
+			var result = UnityBlendModeToBlendMode.FirstOrDefault(x => x.Value == blendMode).Key;
+			return result != default ? result : (UnityBlendMode.SrcAlpha, UnityBlendMode.OneMinusSrcAlpha);
+		}
+
+		private static void DrawRampProperties(MaterialEditor materialEditor, MaterialProperty[] properties,
+			Material material)
+		{
+			DrawProperty(materialEditor, properties, "_UseRampMap");
+
+			if (material.IsKeywordEnabled("_RAMP_MAP"))
+			{
+				DrawProperty(materialEditor, properties, "_RampMap");
+			}
+			else
+			{
+				DrawProperty(materialEditor, properties, "_PureShadowColor");
+				DrawShadowTintProperty(materialEditor, properties);
+				DrawProperty(materialEditor, properties, "_RampTriple");
+				DrawRampProperty0(materialEditor, properties);
+
+				if (material.IsKeywordEnabled("_RAMP_TRIPLE"))
+					DrawProperty(materialEditor, properties, "_Ramp1");
+
+				DrawRampSmoothnessProperty(materialEditor, properties);
+			}
+		}
+
+		private static void DrawEmissionProperties(MaterialEditor materialEditor, MaterialProperty[] properties,
+			Material material)
+		{
+			EditorGUILayout.BeginHorizontal();
+			DrawProperty(materialEditor, properties, "_Emission");
+
+			if (material.IsKeywordEnabled("_EMISSION"))
+				DrawProperty(materialEditor, properties, "_EmissionColor");
+
+			EditorGUILayout.EndHorizontal();
+		}
+
+		private static void DrawRimProperties(MaterialEditor materialEditor, MaterialProperty[] properties,
+			Material material)
+		{
+			DrawProperty(materialEditor, properties, "_Fresnel");
+
+			if (material.IsKeywordEnabled("_FRESNEL"))
+			{
+				DrawProperty(materialEditor, properties, "_FresnelColor");
+				DrawProperty(materialEditor, properties, "_FresnelThickness");
+				DrawProperty(materialEditor, properties, "_FresnelSmoothness");
+			}
+		}
+
+		private static void DrawSpecularProperties(MaterialEditor materialEditor, MaterialProperty[] properties,
+			Material material)
+		{
+			DrawProperty(materialEditor, properties, "_Specular");
+
+			if (material.IsKeywordEnabled("_SPECULAR"))
+			{
+				DrawProperty(materialEditor, properties, "_AnisoSpecular");
+				DrawProperty(materialEditor, properties, "_SpecularColor");
+				DrawProperty(materialEditor, properties, "_SpecularThreshold");
+				DrawProperty(materialEditor, properties, "_SpecularExponent");
+				DrawProperty(materialEditor, properties, "_SpecularSmoothness");
+			}
+		}
+
+		private static void DrawReflectionProperties(MaterialEditor materialEditor, MaterialProperty[] properties,
+			Material material)
+		{
+			DrawProperty(materialEditor, properties, "_Reflections");
+			if (!material.IsKeywordEnabled("_REFLECTIONS")) return;
+
+			DrawProperty(materialEditor, properties, "_ReflectionSmoothness");
+			DrawProperty(materialEditor, properties, "_ReflectionBlend");
+			DrawProperty(materialEditor, properties, "_ReflectionProbes");
+		}
+
+		private static void DrawMiscProperties(MaterialEditor materialEditor, MaterialProperty[] properties,
+			Material material)
+		{
+			DrawFogProperty(materialEditor, properties);
+
+			DrawProperty(materialEditor, properties, "_AdditionalLights");
+			if (material.IsKeywordEnabled("_ADDITIONAL_LIGHTS_ENABLED") &&
+			    material.IsKeywordEnabled("_SPECULAR"))
+				DrawProperty(materialEditor, properties, "_AdditionalLightsSpecular");
+
+			DrawProperty(materialEditor, properties, "_EnvironmentLightingEnabled");
+			DrawProperty(materialEditor, properties, "_ShadowMask");
+
+
+			DrawVertexColorProperty(materialEditor, properties);
+
+			DrawPropertyCustom(materialEditor, properties, "Priority", DrawQueueOffset);
+		}
+
+		private static void DrawQueueOffset(MaterialEditor materialEditor, MaterialProperty[] properties)
+		{
+			var property = FindProperty("_QueueOffset", properties);
+			EditorGUI.showMixedValue = property.hasMixedValue;
+			var currentValue = (int)property.floatValue;
+			var newValue = EditorGUILayout.IntSlider(currentValue, -QueueOffsetRange, QueueOffsetRange);
+			if (currentValue != newValue)
+			{
+				property.floatValue = newValue;
+				materialEditor.PropertiesChanged();
+			}
+
+			EditorGUI.showMixedValue = false;
+		}
+
+		private enum BlendMode
+		{
+			Alpha,
+			Premultiply,
+			Additive,
+			Multiply,
+		}
+
+		private enum SurfaceType
+		{
+			Opaque,
+			Transparent,
+		}
+	}
+}
