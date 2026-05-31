@@ -32,11 +32,16 @@ public sealed class RunnerController : MonoBehaviour
     private float originalHeight;
     private Vector3 originalCenter;
 
-    public float CurrentSpeed => baseForwardSpeed + speedBonus;
+    public float CurrentSpeed => (baseForwardSpeed + speedBonus) * speedMultiplier;
     public int CurrentLane => currentLane;
     public bool IsGrounded => controller != null && controller.isGrounded;
     public bool IsSliding => isSliding;
     public bool IsInvulnerable { get; private set; }
+
+    private float speedMultiplier = 1f;
+    private Vector3 knockbackVelocity;
+    private Coroutine slowCoroutine;
+    private Coroutine knockbackCoroutine;
 
     private void Awake()
     {
@@ -68,6 +73,36 @@ public sealed class RunnerController : MonoBehaviour
     public void SetInvulnerable(float seconds)
     {
         StartCoroutine(InvulnerabilityRoutine(seconds));
+    }
+
+    /// <summary>
+    /// 临时降低玩家速度。
+    /// </summary>
+    /// <param name="multiplier">速度倍率（0.35 = 降至 35%）</param>
+    /// <param name="duration">持续时间（秒）</param>
+    public void ApplySlow(float multiplier, float duration)
+    {
+        if (slowCoroutine != null)
+        {
+            StopCoroutine(slowCoroutine);
+        }
+
+        slowCoroutine = StartCoroutine(SlowRoutine(multiplier, duration));
+    }
+
+    /// <summary>
+    /// 对玩家施加击退力。
+    /// </summary>
+    public void ApplyKnockback(Vector3 impulse)
+    {
+        knockbackVelocity += impulse;
+
+        if (knockbackCoroutine != null)
+        {
+            StopCoroutine(knockbackCoroutine);
+        }
+
+        knockbackCoroutine = StartCoroutine(KnockbackDecayRoutine());
     }
 
     private void ReadLaneInput()
@@ -119,7 +154,18 @@ public sealed class RunnerController : MonoBehaviour
 
         velocity.y += gravity * Time.deltaTime;
 
-        Vector3 motion = new Vector3(xDelta, velocity.y * Time.deltaTime, CurrentSpeed * Time.deltaTime);
+        // 击退速度衰减
+        if (knockbackVelocity.sqrMagnitude > 0.001f)
+        {
+            knockbackVelocity = Vector3.Lerp(knockbackVelocity, Vector3.zero, 5f * Time.deltaTime);
+        }
+        else
+        {
+            knockbackVelocity = Vector3.zero;
+        }
+
+        Vector3 motion = new Vector3(xDelta, velocity.y * Time.deltaTime, CurrentSpeed * Time.deltaTime)
+                         + knockbackVelocity * Time.deltaTime;
         controller.Move(motion);
     }
 
@@ -141,6 +187,22 @@ public sealed class RunnerController : MonoBehaviour
         IsInvulnerable = true;
         yield return new WaitForSeconds(seconds);
         IsInvulnerable = false;
+    }
+
+    private IEnumerator SlowRoutine(float multiplier, float duration)
+    {
+        speedMultiplier = multiplier;
+        yield return new WaitForSeconds(duration);
+        speedMultiplier = 1f;
+        slowCoroutine = null;
+    }
+
+    private IEnumerator KnockbackDecayRoutine()
+    {
+        // 击退力在 Move() 中逐帧衰减，此协程仅等待击退结束
+        yield return new WaitForSeconds(0.8f);
+        knockbackVelocity = Vector3.zero;
+        knockbackCoroutine = null;
     }
 
     private void ApplyPlayerLayer(Transform root)
