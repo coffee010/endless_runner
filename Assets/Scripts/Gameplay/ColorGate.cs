@@ -7,7 +7,7 @@ public sealed class ColorGate : MonoBehaviour, IPoolable
     [SerializeField] private GameObject failVfxPrefab;
     [SerializeField] private bool deactivateOnPass = true;
     [SerializeField] private bool deactivateOnFail = true;
-    [SerializeField] private int wrongColorPenalty = 100;
+    [SerializeField] private int wrongColorPenalty = 10;
 
     public EnergyMode RequiredMode => requiredMode;
     public Color RequiredColor => GetModeColor(requiredMode);

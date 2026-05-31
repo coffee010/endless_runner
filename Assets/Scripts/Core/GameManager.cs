@@ -15,6 +15,8 @@ public sealed class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     [SerializeField] private bool startOnPlay = true;
+    [SerializeField] private RunnerController runner;
+    [SerializeField] private float reviveInvulnerabilitySeconds = 2f;
 
     public GameState State { get; private set; } = GameState.Ready;
     public bool IsPlaying => State == GameState.Playing;
@@ -40,7 +42,16 @@ public sealed class GameManager : MonoBehaviour
     private void Update()
     {
         Keyboard keyboard = Keyboard.current;
-        if (State == GameState.GameOver && keyboard != null && keyboard.rKey.wasPressedThisFrame)
+        if (State != GameState.GameOver || keyboard == null)
+        {
+            return;
+        }
+
+        if (keyboard.fKey.wasPressedThisFrame)
+        {
+            Revive();
+        }
+        else if (keyboard.rKey.wasPressedThisFrame)
         {
             Restart();
         }
@@ -65,6 +76,22 @@ public sealed class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void Revive()
+    {
+        if (State != GameState.GameOver)
+        {
+            return;
+        }
+
+        if (runner == null)
+        {
+            runner = FindObjectOfType<RunnerController>();
+        }
+
+        runner?.SetInvulnerable(reviveInvulnerabilitySeconds);
+        SetState(GameState.Playing);
     }
 
     private void SetState(GameState newState)

@@ -11,12 +11,11 @@ public sealed class UIManager : MonoBehaviour
     [SerializeField] private Slider energySlider;
     [SerializeField] private GameObject gameOverPanel;
 
+    private bool subscribedToGameManager;
+
     private void OnEnable()
     {
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.StateChanged += HandleStateChanged;
-        }
+        TrySubscribeGameManager();
 
         if (scoreManager != null)
         {
@@ -29,12 +28,18 @@ public sealed class UIManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        TrySubscribeGameManager();
+    }
+
     private void OnDisable()
     {
-        if (GameManager.Instance != null)
+        if (subscribedToGameManager && GameManager.Instance != null)
         {
             GameManager.Instance.StateChanged -= HandleStateChanged;
         }
+        subscribedToGameManager = false;
 
         if (scoreManager != null)
         {
@@ -49,10 +54,27 @@ public sealed class UIManager : MonoBehaviour
 
     private void Update()
     {
+        if (!subscribedToGameManager)
+        {
+            TrySubscribeGameManager();
+        }
+
         if (speedText != null && scoreManager != null)
         {
             speedText.text = $"Speed {scoreManager.CurrentSpeed:0.0}";
         }
+    }
+
+    private void TrySubscribeGameManager()
+    {
+        if (subscribedToGameManager || GameManager.Instance == null)
+        {
+            return;
+        }
+
+        GameManager.Instance.StateChanged += HandleStateChanged;
+        subscribedToGameManager = true;
+        HandleStateChanged(GameManager.Instance.State);
     }
 
     private void HandleStateChanged(GameState state)
