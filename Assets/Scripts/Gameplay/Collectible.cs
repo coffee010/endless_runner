@@ -6,7 +6,7 @@ public enum CollectibleType
     Energy
 }
 
-public sealed class Collectible : MonoBehaviour
+public sealed class Collectible : MonoBehaviour, IPoolable
 {
     [SerializeField] private CollectibleType type = CollectibleType.Energy;
     [SerializeField] private int scoreValue = 50;
@@ -14,6 +14,13 @@ public sealed class Collectible : MonoBehaviour
     [SerializeField] private GameObject collectVfxPrefab;
 
     private bool collected;
+    private EnergyBurst cachedBurst;
+
+    private void Awake()
+    {
+        // 缓存引用，避免每次收集时 FindObjectOfType
+        cachedBurst = FindAnyObjectByType<EnergyBurst>();
+    }
 
     public void Collect(ScoreManager scoreManager)
     {
@@ -29,10 +36,9 @@ public sealed class Collectible : MonoBehaviour
             scoreManager.AddBonus(scoreValue);
         }
 
-        EnergyBurst burst = FindObjectOfType<EnergyBurst>();
-        if (type == CollectibleType.Energy && burst != null)
+        if (type == CollectibleType.Energy && cachedBurst != null)
         {
-            burst.AddEnergy(energyValue);
+            cachedBurst.AddEnergy(energyValue);
         }
 
         if (collectVfxPrefab != null)
@@ -40,6 +46,25 @@ public sealed class Collectible : MonoBehaviour
             Instantiate(collectVfxPrefab, transform.position, Quaternion.identity);
         }
 
+        // 隐藏 → 对象池回收（在外部调用 pool.Release）
         gameObject.SetActive(false);
+    }
+
+    // ───────────────────── IPoolable ─────────────────────
+
+    public void OnSpawn()
+    {
+        collected = false;
+
+        // 再次尝试缓存（防止首次 Awake 时 EnergyBurst 尚未初始化）
+        if (cachedBurst == null)
+        {
+            cachedBurst = FindAnyObjectByType<EnergyBurst>();
+        }
+    }
+
+    public void OnDespawn()
+    {
+        // 无需额外清理
     }
 }
