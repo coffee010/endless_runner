@@ -50,6 +50,7 @@ public sealed class Obstacle : MonoBehaviour, IPoolable
     [Header("VFX")]
     [SerializeField] private GameObject collisionVfxPrefab;
     [SerializeField] private GameObject idleVfxPrefab;
+    [SerializeField] private float collisionVfxScale = 1.9f;
 
     private Vector3 startPosition;
     private float phase;
@@ -172,7 +173,7 @@ public sealed class Obstacle : MonoBehaviour, IPoolable
 
         if (collisionVfxPrefab != null)
         {
-            Instantiate(collisionVfxPrefab, transform.position, Quaternion.identity);
+            VfxUtility.Spawn(collisionVfxPrefab, transform.position, Quaternion.identity, collisionVfxScale);
         }
 
         return response;

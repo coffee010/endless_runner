@@ -35,6 +35,13 @@ public sealed class TrackSpawner : MonoBehaviour
     [SerializeField] private float colorGateZOffsetMin = 8f;
     [SerializeField] private float colorGateZOffsetMax = 20f;
 
+    [Header("VFX")]
+    [SerializeField] private GameObject obstacleCollisionVfxPrefab;
+    [SerializeField] private GameObject gatePassVfxPrefab;
+    [SerializeField] private GameObject gateFailVfxPrefab;
+    [SerializeField] private float obstacleCollisionVfxScale = 1.9f;
+    [SerializeField] private float gateVfxScale = 2.1f;
+
     private readonly Queue<TrackSegment> activeSegments = new Queue<TrackSegment>();
     private readonly Dictionary<TrackSegment, SimpleObjectPool<TrackSegment>> pools = new Dictionary<TrackSegment, SimpleObjectPool<TrackSegment>>();
     private float nextSpawnZ;
@@ -233,6 +240,8 @@ public sealed class TrackSpawner : MonoBehaviour
         SetPrivateField(obstacle, "obstacleType", (int)type);
         SetPrivateField(obstacle, "response", (int)GetResponseForType(type));
         SetPrivateField(obstacle, "animateMovement", type is ObstacleType.Moving or ObstacleType.Rotating);
+        SetPrivateField(obstacle, "collisionVfxPrefab", obstacleCollisionVfxPrefab);
+        SetPrivateField(obstacle, "collisionVfxScale", obstacleCollisionVfxScale);
 
         // 2. 再加 ObstacleVisual
         ObstacleVisual visual = obj.AddComponent<ObstacleVisual>();
@@ -354,6 +363,9 @@ public sealed class TrackSpawner : MonoBehaviour
         // 1. ColorGate 组件
         ColorGate gate = obj.AddComponent<ColorGate>();
         SetPrivateField(gate, "requiredMode", (int)gateColor);
+        SetPrivateField(gate, "passVfxPrefab", gatePassVfxPrefab);
+        SetPrivateField(gate, "failVfxPrefab", gateFailVfxPrefab);
+        SetPrivateField(gate, "vfxScale", gateVfxScale);
 
         // 2. 视觉（ColorGateVisual 由 Awake 自动创建门框模型）
         // 注：ColorGateVisual 有 [RequireComponent(typeof(ColorGate))]，

@@ -8,6 +8,7 @@ public sealed class ColorGate : MonoBehaviour, IPoolable
     [SerializeField] private bool deactivateOnPass = true;
     [SerializeField] private bool deactivateOnFail = true;
     [SerializeField] private int wrongColorPenalty = 10;
+    [SerializeField] private float vfxScale = 2.1f;
 
     public EnergyMode RequiredMode => requiredMode;
     public Color RequiredColor => GetModeColor(requiredMode);
@@ -72,7 +73,7 @@ public sealed class ColorGate : MonoBehaviour, IPoolable
     {
         if (prefab != null)
         {
-            Instantiate(prefab, transform.position, Quaternion.identity);
+            VfxUtility.SpawnTinted(prefab, transform.position, Quaternion.identity, vfxScale, RequiredColor);
         }
     }
 

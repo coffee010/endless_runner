@@ -13,6 +13,7 @@ public sealed class EnergyBurst : MonoBehaviour
     [SerializeField] private LayerMask clearObstacleLayers = ~0;
     [SerializeField, Min(1)] private int maxClearHits = 32;
     [SerializeField] private GameObject burstVfxPrefab;
+    [SerializeField] private float burstVfxScale = 2.4f;
 
     public float Energy { get; private set; }
     public float NormalizedEnergy => maxEnergy <= 0f ? 0f : Energy / maxEnergy;
@@ -61,7 +62,7 @@ public sealed class EnergyBurst : MonoBehaviour
 
         if (burstVfxPrefab != null)
         {
-            Instantiate(burstVfxPrefab, transform.position, Quaternion.identity);
+            VfxUtility.Spawn(burstVfxPrefab, transform.position, Quaternion.identity, burstVfxScale);
         }
 
         ClearForwardObstacles();

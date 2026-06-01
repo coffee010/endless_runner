@@ -12,6 +12,7 @@ public sealed class Collectible : MonoBehaviour, IPoolable
     [SerializeField] private int scoreValue = 50;
     [SerializeField] private float energyValue = 10f;
     [SerializeField] private GameObject collectVfxPrefab;
+    [SerializeField] private float collectVfxScale = 1.8f;
 
     private bool collected;
     private EnergyBurst cachedBurst;
@@ -43,7 +44,7 @@ public sealed class Collectible : MonoBehaviour, IPoolable
 
         if (collectVfxPrefab != null)
         {
-            Instantiate(collectVfxPrefab, transform.position, Quaternion.identity);
+            VfxUtility.Spawn(collectVfxPrefab, transform.position, Quaternion.identity, collectVfxScale);
         }
 
         // 隐藏 → 对象池回收（在外部调用 pool.Release）

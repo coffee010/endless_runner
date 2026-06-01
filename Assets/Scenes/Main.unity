@@ -543,7 +543,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   maxClearHits: 32
-  burstVfxPrefab: {fileID: 0}
+  burstVfxPrefab: {fileID: 6493192353273729961, guid: 15a73bd0e83a8784da9f7038adf7b213, type: 3}
+  burstVfxScale: 2.4
 --- !u!114 &485434744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1526,6 +1527,27 @@ MonoBehaviour:
   defaultSegmentLength: 48
   redSegmentEvery: 3
   redSegmentOffset: 2
+  poolCapacityPerPrefab: 4
+  spawnObstacles: 1
+  safeSegments: 2
+  obstaclesPerSegment: 3
+  obstacleSpacingMin: 4
+  obstacleSpacingMax: 10
+  useAllObstacleTypes: 1
+  allowedObstacleTypes:
+  - 0
+  - 1
+  - 2
+  obstacleYOffset: 0.05
+  spawnColorGates: 1
+  colorGateChance: 0.4
+  colorGateZOffsetMin: 8
+  colorGateZOffsetMax: 20
+  obstacleCollisionVfxPrefab: {fileID: 2041118532125902861, guid: 047b13ec0c765be41903c758c0f0d5e6, type: 3}
+  gatePassVfxPrefab: {fileID: 1391681280038755628, guid: 94270421d5f96ed4f9052d1925ef0b41, type: 3}
+  gateFailVfxPrefab: {fileID: 2041118532125902861, guid: 047b13ec0c765be41903c758c0f0d5e6, type: 3}
+  obstacleCollisionVfxScale: 1.9
+  gateVfxScale: 2.1
 --- !u!4 &1738319979
 Transform:
   m_ObjectHideFlags: 0
