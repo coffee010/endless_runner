@@ -1,17 +1,31 @@
 using UnityEngine;
 
-public sealed class ColorGate : MonoBehaviour
+public sealed class ColorGate : MonoBehaviour, IPoolable
 {
     [SerializeField] private EnergyMode requiredMode = EnergyMode.Blue;
     [SerializeField] private GameObject passVfxPrefab;
     [SerializeField] private GameObject failVfxPrefab;
     [SerializeField] private bool deactivateOnPass = true;
     [SerializeField] private bool deactivateOnFail = true;
-    [SerializeField] private int wrongColorPenalty = 100;
+    [SerializeField] private int wrongColorPenalty = 10;
 
     public EnergyMode RequiredMode => requiredMode;
     public Color RequiredColor => GetModeColor(requiredMode);
     public int WrongColorPenalty => wrongColorPenalty;
+
+    private void Awake()
+    {
+        // 确保有触发碰撞体，玩家穿过门时触发 OnTriggerEnter
+        BoxCollider col = GetComponent<BoxCollider>();
+        if (col == null)
+        {
+            col = gameObject.AddComponent<BoxCollider>();
+        }
+
+        col.isTrigger = true;
+        col.center = new Vector3(0f, 1.35f, 0f);
+        col.size = new Vector3(1.8f, 2.7f, 0.3f);
+    }
 
     public bool TryPass(EnergyMode currentMode)
     {
@@ -60,5 +74,19 @@ public sealed class ColorGate : MonoBehaviour
         {
             Instantiate(prefab, transform.position, Quaternion.identity);
         }
+    }
+
+    // ───────────────────── IPoolable ─────────────────────
+
+    public void OnSpawn()
+    {
+        // 对象池取出时无需额外重置。
+        // requiredMode 由 TrackSegment.ApplyColorTheme 在取出后设置，
+        // 可见性也由 TrackSegment 控制。
+    }
+
+    public void OnDespawn()
+    {
+        // 放回池时无需额外清理。
     }
 }

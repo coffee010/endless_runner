@@ -1,7 +1,9 @@
 using UnityEngine;
 
-public sealed class TrackSegment : MonoBehaviour
+public sealed class TrackSegment : MonoBehaviour, IPoolable
 {
+    /// <summary>产生此实例的预制体引用，供对象池回收时查找对应池。</summary>
+    public TrackSegment SourcePrefab { get; set; }
     [SerializeField] private float length = 30f;
     [SerializeField] private Transform endAnchor;
     [SerializeField] private bool configureColorGates = true;
@@ -135,8 +137,15 @@ public sealed class TrackSegment : MonoBehaviour
 
     private void BuildScenery(EnergyMode mode)
     {
-        if (!buildProceduralScenery || sceneryRoot != null)
+        if (!buildProceduralScenery)
         {
+            return;
+        }
+
+        if (sceneryRoot != null)
+        {
+            // 场景已存在（对象池复用），只更新颜色，不重建几何体
+            UpdateSceneryColors(mode);
             return;
         }
 
@@ -146,8 +155,14 @@ public sealed class TrackSegment : MonoBehaviour
         ApplyEnvironmentLayer(root.transform);
 
         Color themeColor = ColorGate.GetModeColor(mode);
-        Color wallColor = new Color(0.018f, 0.02f, 0.03f);
         Color railColor = themeColor * 0.8f;
+
+        BuildSceneryGeometry(railColor, themeColor);
+    }
+
+    private void BuildSceneryGeometry(Color railColor, Color themeColor)
+    {
+        Color wallColor = new Color(0.018f, 0.02f, 0.03f);
 
         CreateSceneryPart("LeftWall", new Vector3(-4.25f, 1.4f, length * 0.5f), new Vector3(0.18f, 2.8f, length), wallColor);
         CreateSceneryPart("RightWall", new Vector3(4.25f, 1.4f, length * 0.5f), new Vector3(0.18f, 2.8f, length), wallColor);
@@ -159,6 +174,23 @@ public sealed class TrackSegment : MonoBehaviour
             float z = 4f + i * 7f;
             CreateSceneryPart("LeftLightPillar", new Vector3(-4.05f, 1.45f, z), new Vector3(0.12f, 2.2f, 0.08f), railColor);
             CreateSceneryPart("RightLightPillar", new Vector3(4.05f, 1.45f, z), new Vector3(0.12f, 2.2f, 0.08f), railColor);
+        }
+    }
+
+    private void UpdateSceneryColors(EnergyMode mode)
+    {
+        Color themeColor = ColorGate.GetModeColor(mode);
+        Color railColor = themeColor * 0.8f;
+
+        foreach (Transform child in sceneryRoot)
+        {
+            Renderer renderer = child.GetComponent<Renderer>();
+            if (renderer == null || renderer.material == null)
+            {
+                continue;
+            }
+
+            renderer.material.SetColor("_BaseColor", railColor);
         }
     }
 
@@ -185,11 +217,15 @@ public sealed class TrackSegment : MonoBehaviour
 
         if (sceneryMaterial == null)
         {
-            Shader shader = Shader.Find("DELTation/Toon Shader");
-            shader ??= Shader.Find("Universal Render Pipeline/Unlit");
+            // 优先 URP/Unlit，保证颜色正确
+            Shader shader = Shader.Find("Universal Render Pipeline/Unlit");
             if (shader == null)
             {
                 shader = Shader.Find("Unlit/Color");
+            }
+            if (shader == null)
+            {
+                shader = Shader.Find("DELTation/Toon Shader");
             }
 
             if (shader != null)
@@ -198,18 +234,12 @@ public sealed class TrackSegment : MonoBehaviour
             }
         }
 
+        // 独立材质实例，保证每部件的颜色正确显示
         if (sceneryMaterial != null)
         {
-            renderer.sharedMaterial = sceneryMaterial;
+            renderer.material = new Material(sceneryMaterial);
+            renderer.material.SetColor("_BaseColor", color);
         }
-
-        themePropertyBlock ??= new MaterialPropertyBlock();
-        themePropertyBlock.Clear();
-        renderer.GetPropertyBlock(themePropertyBlock);
-        themePropertyBlock.SetColor("_BaseColor", color);
-        themePropertyBlock.SetColor("_Color", color);
-        themePropertyBlock.SetColor("_EmissionColor", color);
-        renderer.SetPropertyBlock(themePropertyBlock);
     }
 
     private void ApplyEnvironmentLayer(Transform root)
@@ -240,5 +270,20 @@ public sealed class TrackSegment : MonoBehaviour
         }
 
         return environmentLayer;
+    }
+
+    // ───────────────────── IPoolable ─────────────────────
+
+    public void OnSpawn()
+    {
+        // 对象池取出时重置：由于 TrackSpawner 随后会调用 ApplyColorTheme，
+        // 这里不需要做额外操作。
+    }
+
+    public void OnDespawn()
+    {
+        // 放回池时清理：重置场景根节点引用，但保留几何体（下次取出时只更新颜色）
+        // 注：几何体保留不销毁——这是对象池性能优势的关键
+        themePropertyBlock?.Clear();
     }
 }
