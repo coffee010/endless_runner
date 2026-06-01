@@ -59,7 +59,10 @@ MonoBehaviour:
   themeEmissionIntensity: 0.75
   applyCyberTrackMaterial: 0
   cyberGridDensity: 18
-  cyberFlowSpeed: 2.2
+  cyberFlowSpeed: 3.8
+  edgePulseDensity: 10
+  edgePulseLength: 0.16
+  edgeIntensity: 1.45
   buildProceduralScenery: 0
 --- !u!1 &9001000000000000001
 GameObject:

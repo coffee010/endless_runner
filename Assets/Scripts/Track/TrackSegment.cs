@@ -12,6 +12,9 @@ public sealed class TrackSegment : MonoBehaviour
     [SerializeField] private bool applyCyberTrackMaterial = false;
     [SerializeField] private float cyberGridDensity = 18f;
     [SerializeField] private float cyberFlowSpeed = 2.2f;
+    [SerializeField] private float edgePulseDensity = 10f;
+    [SerializeField] private float edgePulseLength = 0.16f;
+    [SerializeField] private float edgeIntensity = 1.45f;
     [SerializeField] private bool buildProceduralScenery = true;
     [SerializeField] private string environmentLayerName = "CyberEnvironment";
 
@@ -98,6 +101,12 @@ public sealed class TrackSegment : MonoBehaviour
             themePropertyBlock.SetFloat("_GridDensity", cyberGridDensity);
             themePropertyBlock.SetFloat("_FlowSpeed", cyberFlowSpeed);
             themePropertyBlock.SetFloat("_EmissionPower", themeEmissionIntensity);
+            themePropertyBlock.SetFloat("_EdgeIntensity", edgeIntensity);
+            themePropertyBlock.SetFloat("_EdgePulseDensity", edgePulseDensity);
+            themePropertyBlock.SetFloat("_EdgePulseLength", edgePulseLength);
+            themePropertyBlock.SetFloat("_PulseDensity", edgePulseDensity);
+            themePropertyBlock.SetFloat("_PulseLength", edgePulseLength);
+            themePropertyBlock.SetFloat("_RimPower", edgeIntensity * 0.45f);
             targetRenderer.SetPropertyBlock(themePropertyBlock);
         }
     }

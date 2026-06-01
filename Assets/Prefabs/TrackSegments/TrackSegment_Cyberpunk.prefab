@@ -2917,11 +2917,14 @@ MonoBehaviour:
   - {fileID: 4274129112628301185}
   - {fileID: 1203200272317195551}
   - {fileID: 417722825257108644}
-  themeEmissionIntensity: 2.2
+  themeEmissionIntensity: 1.2
   tintThemedBaseColor: 0
   applyCyberTrackMaterial: 0
   cyberGridDensity: 22
-  cyberFlowSpeed: 2.8
+  cyberFlowSpeed: 4.2
+  edgePulseDensity: 12
+  edgePulseLength: 0.14
+  edgeIntensity: 0.8
   buildProceduralScenery: 0
   environmentLayerName: CyberEnvironment
 --- !u!1 &7828281861032002877

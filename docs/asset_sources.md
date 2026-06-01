@@ -1,22 +1,33 @@
 # Asset Sources
 
-Record every external asset used in the project. This is important for the report and defense.
+This file records the external and original assets used or imported in the project. Keep it updated whenever an asset is added, replaced, edited, or removed.
+
+Last checked: 2026-05-31
+
+## Source Table
 
 | Asset | Type | Source URL | License | Modified? | Used For |
 | --- | --- | --- | --- | --- | --- |
-| Neon materials | Material | Created by team | Original | Yes | Track, obstacles, gates, collectibles |
-| Flowing neon track shader | Shader Graph | Created by team | Original | Yes | Moving neon light effect on track |
-| Particle effects | VFX | Created in Unity Particle System | Original | Yes | Collect, hit, gate pass, burst effects |
-| Post-processing profile | URP Volume Profile | Created by team | Original | Yes | Bloom, color adjustments, vignette |
+| Naxida / Nahida character model (`Assets/Naxida/纳西妲.fbx`) | Character model and textures | Original download page not recorded in this repository. Likely fan/MMD-style Genshin Impact/Nahida model; verify against HoYoverse asset/fan-work terms before public release. | Unverified / needs confirmation. Treat as non-commercial classroom placeholder until source and permission are documented. | Yes. Imported into Unity, materials remapped, scaled/positioned in `Main.unity`, animated through the runner animator bridge. | Main playable character. |
+| Quaternius Ultimate Platformer Pack / Cyberpunk Game Kit subset (`Assets/ThirdParty/Quaternius/CyberpunkGameKit`) | 3D environment props, pickups, platforms, textures | https://quaternius.com/ and local license file: `Assets/ThirdParty/Quaternius/CyberpunkGameKit/License.txt` | CC0 1.0 Universal / Public Domain Dedication. | Yes. Imported into Unity and assembled into cyberpunk track prefabs/material variants. | Track segments, platforms, props, pickups, obstacles, cyberpunk scene dressing. |
+| Cyberpunk Game Kit material subset (`Assets/Cyberpunk Game Kit`) | Materials and sign texture | Same source as Quaternius Cyberpunk Game Kit subset above. | CC0 1.0 Universal, based on the bundled Quaternius license. | Yes. Materials duplicated/retinted and connected to local neon/cyber materials. | Readable cyberpunk colors, screens, signs, and environment surfaces. |
+| Starter Assets - Third Person Character Controller (`Assets/StarterAssets`) | Controller sample assets, humanoid animation clips, camera/input prefabs, footstep and landing SFX | https://assetstore.unity.com/packages/essentials/starter-assets-thirdperson-updates-in-new-charactercontroller-pa-196526 and `Assets/StarterAssets/license.txt` | Unity Companion License. | Yes. Controller logic is not used directly for runner movement, but animation controller/clips and some supporting assets remain in the project. | Base third-person animation controller, run/jump/idle animation clips, optional footstep/landing audio files. |
+| Starter Assets animation clips (`Assets/StarterAssets/ThirdPersonController/Character/Animations`) | Humanoid animation clips and animator controller | Same Starter Assets package above. | Unity Companion License. | Yes. Animator parameters are driven by custom `RunnerAnimatorBridge`; slide state was added to the existing controller. | Run, idle, jump, in-air, landing, and animation state machine support for the player. |
+| Slide animation (`Assets/Animations/Slide/Slide.fbx`) | Humanoid animation clip | Source not recorded in this repository. If downloaded from Mixamo, document the exact Mixamo asset page/account export. | Unverified until source is confirmed. If Mixamo, covered by Adobe/Mixamo terms for use in projects, but redistribution of raw source files should be reviewed. | Yes. Imported as a humanoid clip and connected to the `Slide` state in the player animator. | Player slide action. |
+| AllSky Free - Deep Dusk (`Assets/AllSkyFree/Deep Dusk`) | Skybox texture and material | https://assetstore.unity.com/ (search: "AllSky Free - 10 Sky / Skybox Set") | Unity Asset Store EULA / Extension Asset, as indicated by Unity import metadata (`licenseType: Store`). | No major content edit. Imported material is assigned as the scene skybox. | Dusk skybox/background lighting mood in `Main.unity`. |
+| DELTation Toon Shader (`Packages/com.deltation.toon-shader`) | URP toon shader package | https://github.com/DELTAation/toon-shader and package author URL https://deltation.tatar/ | MIT License (`Packages/com.deltation.toon-shader/LICENSE.txt`). | No source edits. Used as imported package dependency. | Toon/cyber visual style materials. |
+| TextMesh Pro / Liberation Sans SDF (`Assets/TextMesh Pro`) | UI text system and font asset | Bundled with Unity/TextMesh Pro; Liberation Sans license file is included at `Assets/TextMesh Pro/Fonts/LiberationSans - OFL.txt`. | TextMesh Pro package under Unity terms; Liberation Sans under SIL Open Font License 1.1. | No major edit. Font assets generated/used by TextMesh Pro. | UI labels, score text, game over text, start/restart prompts. |
+| Custom neon materials (`Assets/Materials`) | Materials | Created by team in Unity. | Original team work. | Yes. Tuned colors, emission, readability, and cyberpunk palette. | Track lanes, gates, collectibles, obstacles, cyber trim, readable road surfaces. |
+| Custom shaders (`Assets/Shades`) | Shader Graph and hand-written shaders | Created by team in Unity. | Original team work. | Yes. Authored and tuned for this project. | Flowing neon track, energy gates, speed-line overlay, cyber track visuals. |
+| Particle effects (`Assets/Prefabs/VFX`) | Unity Particle System prefabs | Created by team in Unity Particle System. | Original team work. | Yes. Built and tuned in Unity. | Collect, hit, gate pass, burst feedback. |
+| Player follow glow (`Assets/Scripts/Player/PlayerFollowGlow.cs`) | Runtime particle/light effect | Created by team in code using Unity Particle System and Light components. | Original team work. | Yes. Generated and tuned through serialized settings on the Player. | Particle glow trail that follows the player and changes color with energy mode. |
+| Post-processing / URP profiles (`Assets/Settings`) | URP renderer assets and volume profiles | Created from Unity URP templates and tuned by team. | Unity project/generated assets plus original tuning. | Yes. Bloom, fog, vignette, color adjustments, and renderer settings adjusted. | Overall cyberpunk look, bloom, readability, and scene atmosphere. |
+| Starter Assets footstep and landing SFX (`Assets/StarterAssets/ThirdPersonController/Character/Sfx`) | Audio clips | Same Starter Assets package above. | Unity Companion License. | No audio edit. Imported with the package; not currently referenced by gameplay scripts in `Main.unity`. | Optional future player footstep/landing sounds. |
+| Animated Mech Pack remnants (`Assets/Animated Mech Pack`) | Materials/textures only | Original source not recorded in this repository. | Unverified until original package/source is documented. | No current gameplay modification found. | Imported reference materials/textures; no active scene reference found during this check. Remove or document exact source if used later. |
 
-## Recommended Sources
+## Notes And Risks
 
-- Mixamo: humanoid character animations
-- Unity Asset Store free packages: sci-fi props, VFX, audio
-- Kenney: simple game assets and UI/audio
-- Freesound: sound effects, only use compatible licenses
-- Sketchfab: models, only use downloadable assets with clear license
-
-## Rule
-
-Do not use an asset if the license is unclear. For classroom work, still record source, author and license.
+- The Naxida/Nahida character asset is the biggest license risk because no source URL or license file is present in the repository. Replace it with a clearly licensed character or add the exact source and license before any public release.
+- `Slide.fbx` also needs its exact source recorded. If it came from Mixamo, add the animation name and export date.
+- Assets listed as "not currently referenced" are still recorded because they exist in the Unity project and may be picked up later. If they are not needed, remove them before final submission.
+- Do not add assets with unclear licenses. For classroom work, still record the source, author, license, modification status, and in-game usage.

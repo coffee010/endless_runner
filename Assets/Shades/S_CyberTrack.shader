@@ -8,6 +8,10 @@ Shader "NeonRush/CyberTrack"
         _LaneWidth ("Lane Width", Range(0.001, 0.25)) = 0.018
         _FlowSpeed ("Flow Speed", Range(-10, 10)) = 2.2
         _EmissionPower ("Emission Power", Range(0, 8)) = 0.9
+        _EdgeWidth ("Edge Width", Range(0.01, 0.3)) = 0.08
+        _EdgeIntensity ("Edge Intensity", Range(0, 4)) = 1.35
+        _EdgePulseDensity ("Edge Pulse Density", Range(1, 32)) = 9
+        _EdgePulseLength ("Edge Pulse Length", Range(0.02, 0.6)) = 0.16
     }
 
     SubShader
@@ -50,6 +54,10 @@ Shader "NeonRush/CyberTrack"
                 half _LaneWidth;
                 half _FlowSpeed;
                 half _EmissionPower;
+                half _EdgeWidth;
+                half _EdgeIntensity;
+                half _EdgePulseDensity;
+                half _EdgePulseLength;
             CBUFFER_END
 
             Varyings Vert(Attributes input)
@@ -76,11 +84,16 @@ Shader "NeonRush/CyberTrack"
                 half laneC = 1.0 - smoothstep(0.012, 0.026, abs(uv.x - 0.78));
                 half grid = LineMask((uv.y + time) * _GridDensity, 0.012);
                 half flow = smoothstep(0.94, 1.0, frac((uv.y + time * 0.65) * 7.0));
-                half edgeGlow = smoothstep(0.45, 0.5, abs(uv.x - 0.5));
+                half edgeDistance = abs(uv.x - 0.5);
+                half edgeCore = smoothstep(0.5 - _EdgeWidth, 0.5, edgeDistance);
+                half edgePulseCoord = frac((uv.y - time * 0.9) * _EdgePulseDensity);
+                half edgePulse = 1.0 - smoothstep(0.0, max(0.001, _EdgePulseLength), edgePulseCoord);
+                half edgeTrail = 1.0 - smoothstep(_EdgePulseLength, saturate(_EdgePulseLength + 0.34), edgePulseCoord);
+                half edgeGlow = edgeCore * (0.35 + edgePulse * 1.15 + edgeTrail * 0.45) * _EdgeIntensity;
                 half panelShade = smoothstep(0.08, 0.35, abs(uv.x - 0.5));
 
                 half laneMask = saturate(laneA + laneB * 0.6 + laneC);
-                half neonMask = saturate(laneMask * 0.9 + grid * 0.16 + flow * 0.45 + edgeGlow * 0.35);
+                half neonMask = saturate(laneMask * 0.9 + grid * 0.16 + flow * 0.45 + edgeGlow);
                 half3 baseColor = _BaseColor.rgb * (0.65 + panelShade * 0.28);
                 half3 emission = _EmissionColor.rgb * neonMask * _EmissionPower;
 
