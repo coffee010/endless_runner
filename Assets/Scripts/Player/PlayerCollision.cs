@@ -4,6 +4,7 @@ using UnityEngine;
 public sealed class PlayerCollision : MonoBehaviour
 {
     [SerializeField] private ScoreManager scoreManager;
+    [SerializeField] private EnergyBurst energyBurst;
 
     private RunnerController runner;
     private EnergyModeController energyModeController;
@@ -12,6 +13,11 @@ public sealed class PlayerCollision : MonoBehaviour
     {
         runner = GetComponent<RunnerController>();
         energyModeController = GetComponent<EnergyModeController>();
+
+        if (energyBurst == null)
+        {
+            energyBurst = GetComponent<EnergyBurst>();
+        }
     }
 
     private void OnControllerColliderHit(ControllerColliderHit hit)
@@ -27,14 +33,12 @@ public sealed class PlayerCollision : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // 收集物
         if (other.TryGetComponent(out Collectible collectible))
         {
             collectible.Collect(scoreManager);
             return;
         }
 
-        // 颜色门
         ColorGate gate = other.GetComponentInParent<ColorGate>();
         if (gate != null)
         {
@@ -42,15 +46,12 @@ public sealed class PlayerCollision : MonoBehaviour
             return;
         }
 
-        // 触发器类型的障碍物（Slow 力场、Knockback 弹射板）
         Obstacle obstacle = other.GetComponentInParent<Obstacle>();
         if (obstacle != null)
         {
             HandleObstacle(obstacle);
         }
     }
-
-    // ──────────── 颜色门 ────────────
 
     private void HandleColorGate(ColorGate gate)
     {
@@ -59,26 +60,13 @@ public sealed class PlayerCollision : MonoBehaviour
             : EnergyMode.Blue;
 
         bool passed = gate.TryPass(currentMode);
+        if (energyBurst == null)
+        {
+            return;
+        }
 
-        if (passed)
-        {
-            // 通过：加分
-            if (scoreManager != null)
-            {
-                scoreManager.AddBonus(50);
-            }
-        }
-        else
-        {
-            // 失败：扣分
-            if (scoreManager != null)
-            {
-                scoreManager.AddPenalty(gate.WrongColorPenalty);
-            }
-        }
+        energyBurst.AddEnergy(passed ? gate.CorrectEnergyReward : -gate.WrongEnergyPenalty);
     }
-
-    // ──────────── 障碍物 ────────────
 
     private void HandleObstacle(Obstacle obstacle)
     {

@@ -8,10 +8,16 @@ public sealed class UIManager : MonoBehaviour
     [SerializeField] private EnergyBurst energyBurst;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI speedText;
+    [SerializeField] private TextMeshProUGUI gameOverStatsText;
     [SerializeField] private Slider energySlider;
     [SerializeField] private GameObject gameOverPanel;
 
     private bool subscribedToGameManager;
+
+    private void Awake()
+    {
+        EnsureGameOverStatsText();
+    }
 
     private void OnEnable()
     {
@@ -83,6 +89,11 @@ public sealed class UIManager : MonoBehaviour
         {
             gameOverPanel.SetActive(state == GameState.GameOver);
         }
+
+        if (state == GameState.GameOver)
+        {
+            UpdateGameOverStats();
+        }
     }
 
     private void HandleScoreChanged(int score)
@@ -99,5 +110,45 @@ public sealed class UIManager : MonoBehaviour
         {
             energySlider.value = normalizedEnergy;
         }
+    }
+
+    private void UpdateGameOverStats()
+    {
+        if (gameOverStatsText == null || scoreManager == null)
+        {
+            return;
+        }
+
+        gameOverStatsText.text = $"Score {scoreManager.Score}\nDistance {scoreManager.Distance:0} m";
+    }
+
+    private void EnsureGameOverStatsText()
+    {
+        if (gameOverStatsText != null || gameOverPanel == null)
+        {
+            return;
+        }
+
+        Transform existing = gameOverPanel.transform.Find("GameOverStatsText");
+        if (existing != null && existing.TryGetComponent(out gameOverStatsText))
+        {
+            return;
+        }
+
+        GameObject textObject = new GameObject("GameOverStatsText", typeof(RectTransform));
+        textObject.transform.SetParent(gameOverPanel.transform, false);
+
+        RectTransform rectTransform = textObject.GetComponent<RectTransform>();
+        rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+        rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+        rectTransform.anchoredPosition = new Vector2(0f, 120f);
+        rectTransform.sizeDelta = new Vector2(520f, 90f);
+
+        gameOverStatsText = textObject.AddComponent<TextMeshProUGUI>();
+        gameOverStatsText.alignment = TextAlignmentOptions.Center;
+        gameOverStatsText.fontSize = 28f;
+        gameOverStatsText.color = Color.white;
+        gameOverStatsText.raycastTarget = false;
+        gameOverStatsText.text = "Score 0\nDistance 0 m";
     }
 }

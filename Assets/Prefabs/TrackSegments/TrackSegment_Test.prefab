@@ -136,7 +136,9 @@ MonoBehaviour:
   failVfxPrefab: {fileID: 0}
   deactivateOnPass: 1
   deactivateOnFail: 1
-  wrongColorPenalty: 10
+  correctEnergyReward: 10
+  wrongEnergyPenalty: 10
+  vfxScale: 2.1
 --- !u!114 &9001000000000000005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -227,7 +229,9 @@ MonoBehaviour:
   failVfxPrefab: {fileID: 0}
   deactivateOnPass: 1
   deactivateOnFail: 1
-  wrongColorPenalty: 10
+  correctEnergyReward: 10
+  wrongEnergyPenalty: 10
+  vfxScale: 2.1
 --- !u!114 &9002000000000000005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -318,7 +322,9 @@ MonoBehaviour:
   failVfxPrefab: {fileID: 0}
   deactivateOnPass: 1
   deactivateOnFail: 1
-  wrongColorPenalty: 10
+  correctEnergyReward: 10
+  wrongEnergyPenalty: 10
+  vfxScale: 2.1
 --- !u!114 &9003000000000000005
 MonoBehaviour:
   m_ObjectHideFlags: 0

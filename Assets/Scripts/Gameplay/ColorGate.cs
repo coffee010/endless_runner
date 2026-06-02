@@ -7,12 +7,14 @@ public sealed class ColorGate : MonoBehaviour, IPoolable
     [SerializeField] private GameObject failVfxPrefab;
     [SerializeField] private bool deactivateOnPass = true;
     [SerializeField] private bool deactivateOnFail = true;
-    [SerializeField] private int wrongColorPenalty = 10;
+    [SerializeField] private float correctEnergyReward = 100f;
+    [SerializeField] private float wrongEnergyPenalty = 10f;
     [SerializeField] private float vfxScale = 2.1f;
 
     public EnergyMode RequiredMode => requiredMode;
     public Color RequiredColor => GetModeColor(requiredMode);
-    public int WrongColorPenalty => wrongColorPenalty;
+    public float CorrectEnergyReward => correctEnergyReward;
+    public float WrongEnergyPenalty => wrongEnergyPenalty;
 
     private void Awake()
     {

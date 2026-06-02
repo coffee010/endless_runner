@@ -17,9 +17,10 @@ public sealed class TrackSpawner : MonoBehaviour
     [Header("Obstacle Spawning")]
     [SerializeField] private bool spawnObstacles = true;
     [SerializeField] private int safeSegments = 2;
-    [SerializeField] private int obstaclesPerSegment = 3;
-    [SerializeField] private float obstacleSpacingMin = 4f;
-    [SerializeField] private float obstacleSpacingMax = 10f;
+    [SerializeField] private int obstaclesPerSegment = 2;
+    [SerializeField] private float obstacleSpacingMin = 6f;
+    [SerializeField] private float obstacleSpacingMax = 12f;
+    [SerializeField] private float sameLaneObstacleSpacingMin = 7f;
     [SerializeField] private bool useAllObstacleTypes = true;
     [SerializeField] private ObstacleType[] allowedObstacleTypes =
     {
@@ -176,27 +177,48 @@ public sealed class TrackSpawner : MonoBehaviour
     {
         float segmentLength = segment.Length > 0f ? segment.Length : defaultSegmentLength;
         float z = obstacleSpacingMin;
+        float[] lastLaneZ = { float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity };
         int spawned = 0;
         int attempts = 0;
 
-        while (z < segmentLength - 2f && spawned < obstaclesPerSegment && attempts < 20)
+        while (z < segmentLength - 3f && spawned < obstaclesPerSegment && attempts < 30)
         {
             attempts++;
 
             // 随机间距
-            z += Random.Range(1.5f, obstacleSpacingMax - obstacleSpacingMin);
+            z += Random.Range(obstacleSpacingMin, obstacleSpacingMax);
 
-            if (z >= segmentLength - 2f)
+            if (z >= segmentLength - 3f)
             {
                 break;
             }
 
             ObstacleType type = PickObstacleType();
-            int lane = Random.Range(0, 3);   // 随机左/中/右跑道
+            int lane = PickObstacleLane(lastLaneZ, z);
+            if (lane < 0)
+            {
+                continue;
+            }
 
             CreateObstacle(segment.transform, type, lane, z);
+            lastLaneZ[lane] = z;
             spawned++;
         }
+    }
+
+    private int PickObstacleLane(float[] lastLaneZ, float z)
+    {
+        int startLane = Random.Range(0, 3);
+        for (int i = 0; i < 3; i++)
+        {
+            int lane = (startLane + i) % 3;
+            if (z - lastLaneZ[lane] >= sameLaneObstacleSpacingMin)
+            {
+                return lane;
+            }
+        }
+
+        return -1;
     }
 
     private ObstacleType PickObstacleType()
