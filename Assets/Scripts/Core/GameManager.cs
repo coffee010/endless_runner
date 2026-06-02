@@ -14,7 +14,7 @@ public sealed class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    [SerializeField] private bool startOnPlay = true;
+    [SerializeField] private bool startOnPlay;
     [SerializeField] private RunnerController runner;
     [SerializeField] private float reviveInvulnerabilitySeconds = 2f;
 
@@ -59,6 +59,7 @@ public sealed class GameManager : MonoBehaviour
 
     public void BeginRun()
     {
+        Time.timeScale = 1f;
         SetState(GameState.Playing);
     }
 
@@ -87,7 +88,7 @@ public sealed class GameManager : MonoBehaviour
 
         if (runner == null)
         {
-            runner = FindObjectOfType<RunnerController>();
+            runner = FindAnyObjectByType<RunnerController>();
         }
 
         runner?.SetInvulnerable(reviveInvulnerabilitySeconds);

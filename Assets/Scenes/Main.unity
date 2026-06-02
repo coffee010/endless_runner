@@ -1328,7 +1328,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b4b4c7f4575a5248865ed0c7b0febaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  startOnPlay: 1
+  startOnPlay: 0
   runner: {fileID: 0}
   reviveInvulnerabilitySeconds: 2
 --- !u!4 &1435136338
