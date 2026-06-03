@@ -43,6 +43,18 @@ public sealed class TrackSpawner : MonoBehaviour
     [SerializeField] private float obstacleCollisionVfxScale = 1.9f;
     [SerializeField] private float gateVfxScale = 2.1f;
 
+    [Header("Collectible Spawning")]
+    [SerializeField] private bool spawnCollectibles = true;
+    [SerializeField] private int collectibleGroupSize = 6;
+    [SerializeField] private float collectibleSpacing = 2.5f;
+    [SerializeField, Range(0f, 1f)] private float collectibleChance = 0.5f;
+    [SerializeField] private float collectibleGroupMinZ = 8f;
+    [SerializeField] private float collectibleGroupMaxZ = 20f;
+    [SerializeField] private float collectibleYOffset = 1.5f;
+    [SerializeField] private float collectibleObstacleMinDistance = 3.5f;
+    [SerializeField] private GameObject collectVfxPrefab;
+    [SerializeField] private float collectVfxScale = 1.8f;
+
     private readonly Queue<TrackSegment> activeSegments = new Queue<TrackSegment>();
     private readonly Dictionary<TrackSegment, SimpleObjectPool<TrackSegment>> pools = new Dictionary<TrackSegment, SimpleObjectPool<TrackSegment>>();
     private float nextSpawnZ;
@@ -130,6 +142,12 @@ public sealed class TrackSpawner : MonoBehaviour
         if (spawnColorGates && spawnedSegmentCount >= safeSegments)
         {
             TrySpawnColorGate(segment, theme);
+        }
+
+        // 收集物（在障碍物和颜色门之后生成，利用已生成的子对象做防重叠检测）
+        if (spawnCollectibles && spawnedSegmentCount >= safeSegments)
+        {
+            TrySpawnCollectibleGroup(segment);
         }
 
         activeSegments.Enqueue(segment);
@@ -336,7 +354,9 @@ public sealed class TrackSpawner : MonoBehaviour
         var toDestroy = new List<GameObject>();
         foreach (Transform child in segment.transform)
         {
-            if (child.GetComponent<Obstacle>() != null || child.GetComponent<ColorGate>() != null)
+            if (child.GetComponent<Obstacle>() != null
+                || child.GetComponent<ColorGate>() != null
+                || child.GetComponent<Collectible>() != null)
             {
                 toDestroy.Add(child.gameObject);
             }
@@ -397,5 +417,148 @@ public sealed class TrackSpawner : MonoBehaviour
         // 3. 触发器碰撞体已在 ColorGate.Awake 中自动创建
 
         Debug.Log($"[TrackSpawner] 创建颜色门: {gateColor} at z={localZ:F1}");
+    }
+
+    // ───────────────────── 收集物生成 ─────────────────────
+
+    /// <summary>
+    /// 尝试在当前段上生成一组收集物（默认 6 个连在一起）。
+    /// 会避开同跑道已生成的障碍物和颜色门位置。
+    /// </summary>
+    private void TrySpawnCollectibleGroup(TrackSegment segment)
+    {
+        // 概率检查
+        if (Random.value > collectibleChance)
+        {
+            return;
+        }
+
+        float segmentLength = segment.Length > 0f ? segment.Length : defaultSegmentLength;
+        int groupSize = Mathf.Max(1, collectibleGroupSize);
+        float spacing = Mathf.Max(0.5f, collectibleSpacing);
+        float groupTotalLength = (groupSize - 1) * spacing;
+
+        // 尝试找到合适的起始 Z 位置
+        float minStartZ = Mathf.Max(3f, collectibleGroupMinZ);
+        float maxStartZ = Mathf.Min(segmentLength - 3f - groupTotalLength, collectibleGroupMaxZ);
+
+        if (maxStartZ <= minStartZ)
+        {
+            Debug.Log($"[TrackSpawner] 段太短，放不下收集物组 (需要 {groupTotalLength:F1}m, 可用 Z=[{minStartZ:F1}, {maxStartZ:F1}])");
+            return;
+        }
+
+        // 尝试不同跑道和位置
+        int maxAttempts = 20;
+        for (int attempt = 0; attempt < maxAttempts; attempt++)
+        {
+            int lane = Random.Range(0, 3);
+            float startZ = Random.Range(minStartZ, maxStartZ);
+
+            // 只收集同跑道的障碍物/颜色门 Z 坐标
+            List<float> sameLaneOccupiedZ = GatherOccupiedZonesInLane(segment, lane);
+
+            if (IsGroupPositionClear(startZ, groupSize, spacing, sameLaneOccupiedZ))
+            {
+                for (int i = 0; i < groupSize; i++)
+                {
+                    float z = startZ + i * spacing;
+                    CreateCollectible(segment.transform, lane, z);
+                }
+
+                Debug.Log($"[TrackSpawner] 创建收集物组: {groupSize} 个, lane {lane}, z={startZ:F1}~{startZ + groupTotalLength:F1}");
+                return;
+            }
+        }
+
+        Debug.Log($"[TrackSpawner] 收集物组 {maxAttempts} 次尝试均未找到不重叠位置，跳过此段");
+    }
+
+    /// <summary>
+    /// 收集当前段上与目标跑道重叠的障碍物和颜色门 Z 坐标。
+    /// 只检查 X 轴距离 ≤ 1.5m 的对象（同跑道或相邻边界）。
+    /// </summary>
+    private static List<float> GatherOccupiedZonesInLane(TrackSegment segment, int targetLane)
+    {
+        List<float> occupied = new List<float>();
+        float targetX = (targetLane - 1) * 2.5f;
+        float laneThreshold = 1.5f; // X 轴距离阈值：只考虑同跑道对象
+
+        foreach (Transform child in segment.transform)
+        {
+            if (child.GetComponent<Obstacle>() != null || child.GetComponent<ColorGate>() != null)
+            {
+                // 只收集与目标跑道 X 轴接近的对象
+                if (Mathf.Abs(child.localPosition.x - targetX) <= laneThreshold)
+                {
+                    occupied.Add(child.localPosition.z);
+                }
+            }
+        }
+
+        return occupied;
+    }
+
+    /// <summary>
+    /// 检查组内所有收集物的 Z 位置是否与已占用区域保持足够距离。
+    /// </summary>
+    private bool IsGroupPositionClear(float startZ, int groupSize, float spacing, List<float> occupiedZ)
+    {
+        // 如果没有同跑道障碍物，直接通过
+        if (occupiedZ.Count == 0)
+        {
+            return true;
+        }
+
+        float minDist = collectibleObstacleMinDistance;
+
+        for (int i = 0; i < groupSize; i++)
+        {
+            float z = startZ + i * spacing;
+
+            foreach (float occupied in occupiedZ)
+            {
+                if (Mathf.Abs(z - occupied) < minDist)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// 从零创建单个收集物 GameObject（无需预制体）。
+    /// CollectibleVisual 会自动生成银色旋转柱体。
+    /// </summary>
+    private void CreateCollectible(Transform parent, int lane, float localZ)
+    {
+        GameObject obj = new GameObject($"Collectible_Energy_L{lane}");
+        obj.transform.SetParent(parent, false);
+
+        // 三跑道：lane 0 = 左 (-2.5), lane 1 = 中 (0), lane 2 = 右 (+2.5)
+        float x = (lane - 1) * 2.5f;
+        obj.transform.localPosition = new Vector3(x, collectibleYOffset, localZ);
+
+        // 1. Collectible 组件（CollectibleVisual 由 [RequireComponent] 自动添加）
+        Collectible collectible = obj.AddComponent<Collectible>();
+        if (collectible == null)
+        {
+            Debug.LogError($"[TrackSpawner] AddComponent<Collectible>() 返回 null！");
+            Destroy(obj);
+            return;
+        }
+
+        // 运行时反射写入字段
+        SetPrivateField(collectible, "type", (int)CollectibleType.Energy);
+        SetPrivateField(collectible, "energyValue", 5f);
+        SetPrivateField(collectible, "collectVfxPrefab", collectVfxPrefab);
+        SetPrivateField(collectible, "collectVfxScale", collectVfxScale);
+
+        // 2. 视觉（CollectibleVisual 在 Awake 中自动构建银色柱体）
+        obj.AddComponent<CollectibleVisual>();
+
+        Debug.Log($"[TrackSpawner] 创建收集物: Energy at lane {lane}, z={localZ:F1}");
     }
 }
