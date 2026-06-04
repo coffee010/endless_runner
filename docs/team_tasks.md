@@ -41,7 +41,7 @@
 ### 网络/第三方来源标注
 
 - 角色模型来源记录为 APlayBox：`https://www.aplaybox.com/`
-- 角色原作 IP 归 miHoYo/HoYoverse 及其权利方所有，本项目仅作学习展示。
+- 纳西妲/Nahida 角色版权归《原神》及米哈游 miHoYo/HoYoverse 所有，本项目仅作学习展示。
 - 环境模型来源为 Quaternius Ultimate Platformer Pack / Cyberpunk Game Kit：`https://quaternius.com/`
 - 渲染包为 DELTation Toon Shader：`https://github.com/DELTAation/toon-shader`
 - 赛博后处理和 Bloom 风格参考 Delt06 URP Toon Shader Cyberpunk Demo：`https://github.com/Delt06/urp-toon-shader-cyberpunk-demo`
@@ -130,5 +130,5 @@ docs/
 
 - 所有外部素材都应记录在 `docs/asset_sources.md`。
 - 背景音乐 `FH6_You.mp3` 只用于课程学习和非商业展示；版权归《极限竞速：地平线 6 / Forza Horizon 6》相关权利方所有。
-- 原神人物模型只用于学习展示；角色、模型设计和相关 IP 归 miHoYo/HoYoverse 及其权利方所有。
+- 原神纳西妲/Nahida 人物模型只用于学习展示；角色版权归《原神》及米哈游 miHoYo/HoYoverse 所有，模型设计和相关 IP 归原权利方所有。
 - 如果项目要公开发布或商用，需要替换所有授权不明确或仅适合学习展示的素材。

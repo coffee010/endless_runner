@@ -78,7 +78,7 @@ docs/
 
 项目中使用或参考的网络/第三方来源已记录在 `docs/asset_sources.md`，主要包括：
 
-- 3D 角色模型：APlayBox 上的纳西妲/Nahida 相关模型资源；原角色、设计和相关知识产权归 miHoYo/HoYoverse 及其权利方所有。
+- 3D 角色模型：APlayBox 上的纳西妲/Nahida 相关模型资源；纳西妲角色版权归《原神》及米哈游 miHoYo/HoYoverse 所有，相关角色设计、模型设计、贴图和知识产权归原权利方所有。
 - 赛博环境模型：Quaternius Ultimate Platformer Pack / Cyberpunk Game Kit，项目内记录为 CC0 1.0 Universal / Public Domain Dedication。
 - 基础动画与部分音效资源：Unity Starter Assets - Third Person Character Controller，遵循 Unity Companion License。
 - 天空盒：AllSky Free - Deep Dusk，来自 Unity Asset Store。
@@ -90,7 +90,7 @@ docs/
 
 本项目仅用于课程学习、课堂展示和非商业 Demo 演示，不用于销售、公开发行或商业运营。
 
-项目中的角色模型、音乐、第三方美术包、Unity 示例资源和其他外部素材，其版权、商标权、角色设计、模型设计、贴图、音乐作品及相关知识产权均归原作者、发行方或相应权利人所有。本项目不声明拥有这些外部素材的版权。
+项目中的角色模型、音乐、第三方美术包、Unity 示例资源和其他外部素材，其版权、商标权、角色设计、模型设计、贴图、音乐作品及相关知识产权均归原作者、发行方或相应权利人所有。本项目不声明拥有这些外部素材的版权。项目中的纳西妲/Nahida 角色来自《原神》相关角色形象，角色版权归《原神》及米哈游 miHoYo/HoYoverse 所有，本项目仅作为学习展示使用。
 
 其中背景音乐 `FH6_You.mp3` 标注为《极限竞速：地平线 6 / Forza Horizon 6》相关音乐素材，版权归其原权利方所有；本项目只在学习用途下作为背景音乐测试和课堂展示使用。请勿将该音乐或项目中的外部素材用于商业用途、二次售卖、公开分发或任何违反原授权条款的用途。
 
